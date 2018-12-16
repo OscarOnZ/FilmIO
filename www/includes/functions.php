@@ -70,6 +70,15 @@ require_once 'film.php';
         }
         return $filmsLiked;
     }
+    function getFilmsUserDislikes($username){
+        global $client;
+        $filmsDisliked = array();
+        $result = $client->run('MATCH(u:User), (f:Film) WHERE (u)-[:dislikes]->(f) AND u.username="'. $username .'" RETURN f, f.ID as ID, COUNT(f) as no');
+        foreach ($result->records() as $record){
+            $filmsDisliked[] = $record->value("ID");
+        }
+        return $filmsDisliked;
+    }
     
     function getUsersFriends($username){
         global $client;
@@ -97,7 +106,7 @@ require_once 'film.php';
         
         //1.
         $filmsLiked = getFilmsUserLikes($username);
-        
+        $filmsDisliked = getFilmsUserDislikes($username);
         //2.
         $friends = getUsersFriends($username);
         if(count($friends) > 0 && count($filmsLiked) > 0){
@@ -109,7 +118,10 @@ require_once 'film.php';
                     if(in_array($film, $friendsLikedFilms)){
                         //3.
                         foreach ($friendsLikedFilms as $friendFilm){
-                            $recFilms[] = $friendFilm;
+                            if(!in_array($friendFilm, $filmsDisliked)){
+                                $recFilms[] = $friendFilm;
+                            }
+                            
                         }
                         
                     }
