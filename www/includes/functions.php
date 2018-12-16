@@ -61,20 +61,51 @@ require_once 'film.php';
         //TODO
     }
     
+    function getFilmsUserLikes($username){
+        global $client;
+        $filmsLiked = array();
+        $result = $client->run('MATCH(u:User), (f:Film) WHERE (u)-[:likes]->(f) AND u.username="'. $username .'" RETURN f, f.ID as ID, COUNT(f) as no');
+        foreach ($result->records() as $record){
+            $filmsLiked[] = $record->value("ID");
+        }
+        return $filmsLiked;
+    }
+    
+    function getUsersFriends($username){
+        global $client;
+        $friends = array();
+        $result = $client->run('MATCH(u:User), (u1:User) WHERE (u)-[:friends]->(u1) AND u.username="' . $username . '" RETURN u1, u1.username as Username, COUNT(u1) as no');
+        foreach ($result->records() as $record){
+            $friends[] = $record->value("Username");
+        }
+        return $friends[0];
+    }
+    
     function getRecommendations($username){
-        $films = array();
+        $recFilms = array();
+        global $client;
         //TODO
         //METHODOLOGY
-        //Get all films user has liked.
-        //Check if any of the user's friends like that film
+        //1. Get all films user has liked.
+        //2. Check if any of the user's friends like that film
         //IF has friends
-            //Recommend a film that the friend likes
+            //3. Recommend a film that the friend likes
         //ELSE
-            //Get all users that like that film
-            //Recommend film that them users like
-        //RETURN 5 films
+            //4. Get all users that like that film
+            //5. Recommend film that them users like
+        //6. RETURN 5 films
         
-        return $films;
+        //1.
+        $filmsLiked = getFilmsUserLikes($username);
+        $friends = getUsersFriends($username);
+        echo $friends;
+        
+        foreach($filmsLiked as $film){
+            
+        }
+        
+        //6.
+        return $recFilms;
     }
 
 
