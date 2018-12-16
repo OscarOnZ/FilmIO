@@ -78,31 +78,67 @@ require_once 'film.php';
         foreach ($result->records() as $record){
             $friends[] = $record->value("Username");
         }
-        return $friends[0];
+        return $friends;
     }
+    
     
     function getRecommendations($username){
         $recFilms = array();
         global $client;
         //TODO
-        //METHODOLOGY
+        //METHOD
         //1. Get all films user has liked.
         //2. Check if any of the user's friends like that film
         //IF has friends
             //3. Recommend a film that the friend likes
         //ELSE
-            //4. Get all users that like that film
-            //5. Recommend film that them users like
+            //4. Recommend a top film
         //6. RETURN 5 films
         
         //1.
         $filmsLiked = getFilmsUserLikes($username);
-        $friends = getUsersFriends($username);
-        echo $friends;
         
-        foreach($filmsLiked as $film){
+        //2.
+        $friends = getUsersFriends($username);
+        if(count($friends) > 0 && count($filmsLiked) > 0){
+            
+            foreach($friends as $friend){
+                $friendsLikedFilms = getFilmsUserLikes($friend);
+                foreach($filmsLiked as $film){
+                    
+                    if(in_array($film, $friendsLikedFilms)){
+                        //3.
+                        foreach ($friendsLikedFilms as $friendFilm){
+                            $recFilms[] = $friendFilm;
+                        }
+                        
+                    }
+                }
+            }
+            
+            //4.
+//             if(count($recFilms) < 5){
+               
+//             }
+            
+            
+//             $freqs = array_count_values($recFilms);
+//             $recFilmsFreq = array();
+//             foreach($recFilms as $film){
+//                 $recFilmsFreq = [
+//                     $film => $freqs[$film]
+                    
+                    
+//                 ];
+//             }
+            
+            return $recFilms;
+            
+            
             
         }
+        
+        
         
         //6.
         return $recFilms;

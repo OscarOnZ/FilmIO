@@ -81,7 +81,7 @@ if(loginCheck()== true){
 	</div>
 	
 	<?php 
-	
+	//TODO - use AJAX to push relations instead of GET Forms
 	$cards = array(new Film("0126029"), new Film("0377092"), new Film("0137523"));
 	
 	foreach ($cards as $card){
