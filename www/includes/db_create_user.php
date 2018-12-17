@@ -1,6 +1,6 @@
 <?php
 
-    require("users.php");
+    require_once("users.php");
     
     
     //get POST Variables

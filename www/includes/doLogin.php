@@ -1,5 +1,5 @@
 <?php
-require_once('users.php'); require_once ('functions.php');
+require_once ('functions.php');
 global $client;
 startSession();
     echo $_POST['Luname']; echo $_POST['Lpass'];

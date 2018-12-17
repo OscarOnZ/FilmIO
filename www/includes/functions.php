@@ -1,6 +1,7 @@
 <?php
 require_once 'db_connect.php';
 require_once 'film.php';
+require_once 'users.php';
     function startSession() {
         $session_name = 'FilmIO'; // Set a custom session name
         $secure = false; // Set to true if using https.

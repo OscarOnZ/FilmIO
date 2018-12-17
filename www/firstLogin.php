@@ -83,7 +83,7 @@ if(loginCheck()== true){
 	<?php 
 	
 	$cards = array(new Film("0126029"), new Film("0377092"), new Film("0137523"));
-	
+	$thisCard = 0;
 	foreach ($cards as $card){
 	    echo'
         	<div class="col-4">
@@ -93,15 +93,16 @@ if(loginCheck()== true){
                     <h5 class="card-title">' . $card->getName() . '</h5>
                     <p class="card-text">'. $card->getDescription() . '</p>
                     <div class="btn-group btn-group-lg" role="group">
-                    <a href="/includes/createRelation.php?type=userFilm&score=1&filmID=' . $card->getFilmID() . '" class="btn btn-success"><span class="fas fa-thumbs-up"></span></a>
-                    <a href="/includes/createRelation.php?type=userFilm&score=-1&filmID=' . $card->getFilmID() . '" class="btn btn-danger"><span class="fas fa-thumbs-down"></span></a>
+                    <button href="#" onClick="ratingClick(\'' . $cards[$thisCard]->getFilmID() .'\', \'1\')" class="btn btn-success"><span class="fas fa-thumbs-up"></span></button>
+                    <a href="#" class="btn btn-danger"><span class="fas fa-thumbs-down"></span></a>
                     <a href="#" class="btn btn-primary">I haven\'t seen it</a>
+<div id="nowhere"></div>
                     </div>
                   </div>
                 </div>
         	</div>
-
         ';
+	    $thisCard++;
 	}
 	
 	?>
@@ -112,6 +113,24 @@ if(loginCheck()== true){
 	<script src="../js/jquery-3.2.1.min.js"></script>
 <script src="../js/popper.min.js"></script>
 <script src="../js/bootstrap-4.0.0.js"></script>
+
+			<script>
+                function ratingClick(filmID, score){
+                        alert("clicked");
+                    	$.ajax({
+    						type: 'GET',
+    						url: '/includes/createRelation.php',
+    						dataType: 'html',
+    						data: {type: 'userFilm', filmID: filmID, score: score},
+							success: function(result){
+								alert("Done: " + result);
+							}
+                        	});
+				};
+
+            </script>
+
+
 </body>
 </html>
 <?php }else{
