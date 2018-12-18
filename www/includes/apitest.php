@@ -1,4 +1,8 @@
 <?php
-$data = file_get_contents("http://www.omdbapi.com/?apikey=31c87b33&i=tt". 2527336);
-$filmInfo = json_decode($data);
-echo $filmInfo->Title;
+require_once ('functions.php');
+if(checkRelationExists("oscar", "1300854", "film", "likes")){
+    echo "true";
+}else{
+    echo "false";
+}
+?>

@@ -3,7 +3,7 @@ require_once ('functions.php');
 global $client;
 startSession();
     echo $_POST['Luname']; echo $_POST['Lpass'];
-if(isset($_POST['Luname']) && isset($_POST['Lpass'])){
+    if(isset($_POST['Luname']) && isset($_POST['Lpass'])){
     
     $username = strtolower($_POST['Luname']);
     $password = $_POST['Lpass'];

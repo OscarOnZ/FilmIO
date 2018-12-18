@@ -60,9 +60,9 @@ if(loginCheck()== true){
 		  <?php echo $_SESSION['fullName'];?>
 		</a>
 		<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-		  <a class="dropdown-item" href="#">Change Password</a>
-		  <a class="dropdown-item" href="#">Notifications</a>
+		  <a class="dropdown-item" href="#">My Profile</a>
 		  <div class="dropdown-divider"></div>
+		  <a class="dropdown-item" href="#">Settings</a>
 		  <a class="dropdown-item" href="/logout.php">Log Out</a>
 		</div>
 	  </li>
@@ -85,47 +85,39 @@ if(loginCheck()== true){
 			</div>
 		</div>
 	</div>
+	
 	<div class="row">
-		<div class="col">
-			<div class="card" style="">
-			  <img class="card-img-top" src="https://m.media-amazon.com/images/M/MV5BMjJmYTNkNmItYjYyZC00MGUxLWJhNWMtZDY4Nzc1MDAwMzU5XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SY1000_CR0,0,676,1000_AL_.jpg" alt="Card image cap">
-			  <div class="card-body">
-				<h5 class="card-title">Fight Club</h5>
-				<p class="card-text">This is some short and snappy text about the film, describing its plot and basic infomation. This will be populated automatically</p>
-				<a href="#" class="btn btn-primary">Go to this film</a>
-			  </div>
-			</div>
-		</div>
-		<div class="col">
-			<div class="card" style="">
-			  <img class="card-img-top" src="https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SY1000_CR0,0,675,1000_AL_.jpg" alt="Card image cap">
-			  <div class="card-body">
-				<h5 class="card-title">Inception</h5>
-				<p class="card-text">This is some short and snappy text about the film, describing its plot and basic infomation. This will be populated automatically</p>
-				<a href="#" class="btn btn-primary">Go to this film</a>
-			  </div>
-			</div>
-		</div>
-		<div class="col">
-			<div class="card" style="">
-			  <img class="card-img-top" src="https://m.media-amazon.com/images/M/MV5BMDdmZGU3NDQtY2E5My00ZTliLWIzOTUtMTY4ZGI1YjdiNjk3XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SY1000_CR0,0,671,1000_AL_.jpg" alt="Card image cap">
-			  <div class="card-body">
-				<h5 class="card-title">Titanic</h5>
-				<p class="card-text">This is some short and snappy text about the film, describing its plot and basic infomation. This will be populated automatically</p>
-				<a href="#" class="btn btn-primary">Go to this film</a>
-			  </div>
-			</div>
-		</div>
-		<div class="col">
-			<div class="card" style="">
-			  <img class="card-img-top" src="https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_SY1000_SX675_AL_.jpg" alt="Card image cap">
-			  <div class="card-body">
-				<h5 class="card-title">Interstellar</h5>
-				<p class="card-text">This is some short and snappy text about the film, describing its plot and basic infomation. This will be populated automatically</p>
-				<a href="#" class="btn btn-primary">Go to this film</a>
-			  </div>
-			</div>
-		</div>
+	<?php 
+	
+	$cards = getRecommendations($_SESSION['username']);
+	$cardsCount = 0;
+	try{
+	    foreach($cards as $card) {
+	        if($cardsCount < 5){
+	            echo'
+        	<div class="col-3">
+        		<div class="card">
+                  	<img class="card-img-top img-fluid" src="' . $card->getImgPath() . '" alt="Card image cap">
+                  <div class="card-body">
+                    <h5 class="card-title">' . $card->getName() . '</h5>
+                    <p class="card-text">'. $card->getDescription() . '</p>
+                    <a href="/viewFilm.php?id=' . $card->getFilmID() .'" class="btn btn-primary">Go to this film</a>
+                  </div>
+                </div>
+        	</div>
+        ';
+	            $cardsCount++;
+	        }
+	        
+	    }
+	}catch(OutOfBoundsException $e){
+	    
+	    //TODO - Call to a getRecommendations with no username which returns a list of generic recommendations.
+	    
+	}
+	
+	
+	?>
 	</div>
 	
 	

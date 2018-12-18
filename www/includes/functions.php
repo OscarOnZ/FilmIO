@@ -45,14 +45,46 @@ require_once 'users.php';
                 }
             
     }
+    
+    function checkRelationExists($username, $subject, $subjectType, $linkType){
+        global $client;
+        $number = -1;
+        if($linkType == "friends" || $linkType == "likes" || $linkType == "dislikes" || $linkType == "friendreq"){
+            if(strtolower($subjectType) == "film"){
+                $result = $client->run('MATCH(u:User)-[r:'. $linkType . ']->(f:Film) WHERE u.username ="' . $username . '" AND f.ID="' . $subject . '"RETURN COUNT(r) as no');
+                $number = $result->firstRecord()->value('no');
+                
+                
+            }else if(strtolower($subjectType) == "user"){
+                $result = $client->run('MATCH(u:User)-[r:'. $linkType . ']->(u1:User) WHERE u.username ="' . $username . '" AND u1.username="' . $subject . '"RETURN COUNT(r) as no');
+                $number = $result->firstRecord()->value('no');
+            }
+            
+            if($number > 0){
+                return true;
+            }else{
+                return false;
+            }
+            
+        }
+        
+        
+        
+    }
+    
     function createFilmUserLink($username, $filmID, $linkType){
         global $client;
         if($linkType == "pos"){
-            $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $username .'" AND f.ID="'. $filmID .'" CREATE (u)-[r:likes]->(f)');
+            if(!checkRelationExists($username, $filmID, "film", "likes")){
+                $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $username .'" AND f.ID="'. $filmID .'" CREATE (u)-[r:likes]->(f)');
+            }
+            
             
             
         }else if($linkType == "neg"){
-            $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $username .'" AND f.ID="'. $filmID .'" CREATE (u)-[r:dislikes]->(f)');
+            if(!checkRelationExists($username, $filmID, "film", "dislikes")){
+                $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $username .'" AND f.ID="'. $filmID .'" CREATE (u)-[r:dislikes]->(f)');
+            }
         }
         else{
             echo 'invalid Link Type';
@@ -62,20 +94,102 @@ require_once 'users.php';
         //TODO
     }
     
+       function getFilmsUserLikes($username){
+        global $client;
+        $filmsLiked = array();
+        $result = $client->run('MATCH(u:User), (f:Film) WHERE (u)-[:likes]->(f) AND u.username="'. $username .'" RETURN f, f.ID as ID, COUNT(f) as no');
+        foreach ($result->records() as $record){
+            $filmsLiked[] = new Film($record->value("ID"));
+        }
+        return $filmsLiked;
+    }
+    function getFilmsUserDislikes($username){
+        global $client;
+        $filmsDisliked = array();
+        $result = $client->run('MATCH(u:User), (f:Film) WHERE (u)-[:dislikes]->(f) AND u.username="'. $username .'" RETURN f, f.ID as ID, COUNT(f) as no');
+        foreach ($result->records() as $record){
+            $filmsDisliked[] = new Film($record->value("ID"));
+        }
+        return $filmsDisliked;
+    }
+    
+    function getUsersFriends($username){
+        global $client;
+        $friends = array();
+        $result = $client->run('MATCH(u:User), (u1:User) WHERE (u)-[:friends]-(u1) AND u.username="' . $username . '" RETURN u1, u1.username as Username, COUNT(u1) as no');
+        foreach ($result->records() as $record){
+            $friends[] = $record->value("Username");
+        }
+        return $friends;
+    }
+    
+    
     function getRecommendations($username){
-        $films = array();
+        $recFilms = array();
+        global $client;
         //TODO
-        //METHODOLOGY
-        //Get all films user has liked.
-        //Check if any of the user's friends like that film
+        //METHOD
+        //1. Get all films user has liked.
+        //2. Check if any of the user's friends like that film
         //IF has friends
-            //Recommend a film that the friend likes
+        //3. Recommend a film that the friend likes
         //ELSE
-            //Get all users that like that film
-            //Recommend film that them users like
+        //4. Recommend a top film
+        //6. RETURN 5 films
+        
+        //1.
+        $filmsLiked = getFilmsUserLikes($username);
+        $filmsDisliked = getFilmsUserDislikes($username);
+        //2.
+        $friends = getUsersFriends($username);
+        if(count($friends) > 0 && count($filmsLiked) > 0){
+            
+            foreach($friends as $friend){ //For every friend
+                $friendsLikedFilms = getFilmsUserLikes($friend); //Get the films they like
+                foreach($filmsLiked as $film){ //For each of the films found
+                    
+                    if(in_array($film, $friendsLikedFilms)){ //Check if any friends liked that film
+                        //3.
+                        foreach ($friendsLikedFilms as $friendFilm){ //For each film the friend liked
+                            if(!in_array($friendFilm, $filmsDisliked) && !in_array($friendFilm, $filmsLiked)){ // make sure i haven't seen it
+                                $recFilms[] = $friendFilm;
+                            }
+                            
+                        }
+                        
+                    }
+                }
+            }
+            
+            //4.
+            //             if(count($recFilms) < 5){
+            
+            //             }
+            
+            
+            //             $freqs = array_count_values($recFilms);
+            //             $recFilmsFreq = array();
+            //             foreach($recFilms as $film){
+            //                 $recFilmsFreq = [
+            //                     $film => $freqs[$film]
+            
+            
+            //                 ];
+            //             }
+            
+            return $recFilms;
+            
+            
+            
+        }
+        
+        
+        //Get all users that like that film
+        //Recommend film that them users like
         //RETURN 5 films
         
-        return $films;
+        //6.
+        return $recFilms;
     }
 
 
