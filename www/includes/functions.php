@@ -30,18 +30,17 @@ require_once 'users.php';
             $password = $node->value("password");
                     $login_check = hash('sha512', $password.$ip_address.$user_browser);
                     if($login_check == $login_string) {
-                        // Logged In!!!!
+                        // Logged In
                         return true;
                     } else {
                         // Not logged in
-                        //return false;
-                        echo 'login check didnt return';
+                        return false;
+                        //echo 'login check didnt return';
                     }
                 } else {
                     
                     // Not logged in
-                    //return false;
-                    echo 'vars arent set';
+                    return false;
                 }
             
     }
@@ -66,6 +65,8 @@ require_once 'users.php';
                 return false;
             }
             
+        }else{
+            return false;
         }
         
         
@@ -126,7 +127,7 @@ require_once 'users.php';
     
     function getRecommendations($username){
         $recFilms = array();
-        global $client;
+
         //TODO
         //METHOD
         //1. Get all films user has liked.
@@ -140,7 +141,7 @@ require_once 'users.php';
         //1.
         $filmsLiked = getFilmsUserLikes($username);
         $filmsDisliked = getFilmsUserDislikes($username);
-        //2.
+        //2. 
         $friends = getUsersFriends($username);
         if(count($friends) > 0 && count($filmsLiked) > 0){
             
@@ -151,7 +152,7 @@ require_once 'users.php';
                     if(in_array($film, $friendsLikedFilms)){ //Check if any friends liked that film
                         //3.
                         foreach ($friendsLikedFilms as $friendFilm){ //For each film the friend liked
-                            if(!in_array($friendFilm, $filmsDisliked) && !in_array($friendFilm, $filmsLiked)){ // make sure i haven't seen it
+                            if(!in_array($friendFilm, $filmsDisliked) && !in_array($friendFilm, $filmsLiked) && !in_array($friendFilm, $recFilms)){ // make sure i haven't seen it
                                 $recFilms[] = $friendFilm;
                             }
                             

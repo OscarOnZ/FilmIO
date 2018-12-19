@@ -1,18 +1,17 @@
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT']. "./includes/functions.php");
+require_once( $_SERVER['DOCUMENT_ROOT']. "/www/includes/functions.php");
 if(loginCheck()){
     header("Location: /index.php");
 }
 ?>
 <!doctype html>
-<html>
 <head>
 
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FilmIO</title>
-<link href="../css/bootstrap-4.0.0.css" rel="stylesheet" type="text/css">
+<link href="css/bootstrap-4.0.0.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css" integrity="sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns" crossorigin="anonymous">
 </head>
 
@@ -73,14 +72,14 @@ if(loginCheck()){
                             <h3 class="mb-0">Login</h3>
                         </div>
                         <div class="card-body">
-                            <form class="form-horizontal" method="post" action="/includes/doLogin.php">
+                            <form class="form-horizontal" method="post" action="includes/doLogin.php">
                                 <div class="form-group">
                                     <label for="email">Username</label>
-                                    <input type="text" class="form-control" name="Luname" id="Luname" required>
+                                    <input type="text" class="form-control" name="Luname" id="Luname" required></div>
                                 </div>
                                 <div class="form-group">
                                     <label>Password</label>
-                                    <input type="password" class="form-control" name="Lpass" id="Lpass" required autocomplete="new-password">
+                                    <input type="password" class="form-control" name="Lpass" id="Lpass" required autocomplete="new-password"/>
                                 </div>
                                 <button type="submit" class="btn btn-success btn-lg float-right" >Login</button>
                             </form>
@@ -131,7 +130,7 @@ if(loginCheck()){
             			
             			
             			?>
-            			<form class="form-horizontal" method="post" action="/includes/db_create_user.php">
+            			<form class="form-horizontal" method="post" action="includes/db_create_user.php">
 						
 						<div class="form-group">
 							<label for="name" class="cols-sm-2 control-label">Your Name</label>
@@ -208,9 +207,9 @@ if(loginCheck()){
       </div>
     </div>
 	
-	<script src="../js/jquery-3.2.1.min.js"></script>
-    <script src="../js/popper.min.js"></script>
-    <script src="../js/bootstrap-4.0.0.js"></script>
+	<script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap-4.0.0.js"></script>
     
     
 	<?php 		if(isset($_GET['error']) && $_GET['error'] != "inputInc"){

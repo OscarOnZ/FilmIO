@@ -5,8 +5,7 @@ if(loginCheck()== true){
     
 
 ?>
-<!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,9 +17,6 @@ if(loginCheck()== true){
 
 <body>
 <div class="container-fluid" style="padding-top: 70px">
-	
-	
-<!doctype html>	
 <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark"> <!--<Navbar>-->
 
 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2"><!-- Left --> 
@@ -93,7 +89,7 @@ if(loginCheck()== true){
 	$cardsCount = 0;
 	try{
 	    foreach($cards as $card) {
-	        if($cardsCount < 5){
+	        if($cardsCount < 4){
 	            echo'
         	<div class="col-3">
         		<div class="card">
@@ -129,6 +125,13 @@ if(loginCheck()== true){
 <script src="../js/popper.min.js"></script>
 <script src="../js/bootstrap-4.0.0.js"></script>
 </body>
+
+    <footer>
+        <hr>
+        <p class="text-center text-secondary">FilmIO by Oscar Cameron Copyright &copy; 2018</p>
+        <hr>
+
+    </footer>
 </html>
 <?php }else{
     header("Location: /login.php");
