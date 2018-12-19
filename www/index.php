@@ -46,8 +46,8 @@ if(loginCheck()== true){
 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2"> <!-- Right -->
 
 	<ul class="navbar-nav ml-auto">
-		<form class="form-inline my-2 my-lg-0">
-		  <input class="form-control mr-sm-2" type="search" placeholder="Find a new film..." aria-label="Search">
+		<form class="form-inline my-2 my-lg-0" action="includes/searchBar.php" method="GET">
+		  <input class="form-control mr-sm-2" type="search" name="text" placeholder="Find a new film..." aria-label="Search"">
 		  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 		</form>
 
@@ -81,7 +81,7 @@ if(loginCheck()== true){
 			</div>
 		</div>
 	</div>
-	
+<!--    Recommendation Cards-->
 	<div class="row">
 	<?php 
 	
@@ -91,7 +91,7 @@ if(loginCheck()== true){
 	    foreach($cards as $card) {
 	        if($cardsCount < 4){
 	            echo'
-        	<div class="col-3">
+        	<div class="col">
         		<div class="card">
                   	<img class="card-img-top img-fluid" src="' . $card->getImgPath() . '" alt="Card image cap">
                   <div class="card-body">
@@ -115,15 +115,18 @@ if(loginCheck()== true){
 	
 	?>
 	</div>
-	
-	
+<!--	/Recommendation Cards-->
+
+
+
 	</div>
 	
 
 	
-<script src="../js/jquery-3.2.1.min.js"></script>
-<script src="../js/popper.min.js"></script>
-<script src="../js/bootstrap-4.0.0.js"></script>
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap-4.0.0.js"></script>
+<script src="js/searchBar.js"></script>
 </body>
 
     <footer>

@@ -2,17 +2,21 @@
 require_once 'db_connect.php';
 require_once 'film.php';
 require_once 'users.php';
+
+
+
+
     function startSession() {
-        $session_name = 'FilmIO'; // Set a custom session name
-        $secure = false; // Set to true if using https.
-        $httponly = true; // This stops javascript being able to access the session id.
+        $session_name = 'FilmIO';
+        $secure = false;
+        $httponly = true;
         
-        ini_set('session.use_only_cookies', 1); // Forces sessions to only use cookies.
-        $cookieParams = session_get_cookie_params(); // Gets current cookies params.
+        ini_set('session.use_only_cookies', 1); //Only use cookies
+        $cookieParams = session_get_cookie_params();
         session_set_cookie_params($cookieParams["lifetime"], $cookieParams["path"], $cookieParams["domain"], $secure, $httponly);
-        session_name($session_name); // Sets the session name to the one set above.
-        session_start(); // Start the php session
-        session_regenerate_id(true); // regenerated the session, delete the old one.
+        session_name($session_name);
+        session_start();
+        session_regenerate_id(true);
     }
     
     function loginCheck() {
@@ -91,7 +95,15 @@ require_once 'users.php';
             echo 'invalid Link Type';
         }
     }
-    function createUserUserLink($username1, $username2, $linkType){
+    function createFriendRequestLink($username1, $username2){
+        //TODO
+    }
+
+    function createFriendLink($username1, $username2){
+        //TODO
+    }
+
+    function unfriend($username1, $username2){
         //TODO
     }
     
@@ -104,6 +116,7 @@ require_once 'users.php';
         }
         return $filmsLiked;
     }
+
     function getFilmsUserDislikes($username){
         global $client;
         $filmsDisliked = array();
@@ -123,10 +136,19 @@ require_once 'users.php';
         }
         return $friends;
     }
-    
-    
+
+
     function getRecommendations($username){
         $recFilms = array();
+
+        $topFilms = [new Film("0111161"),
+            new Film("0068646"),
+            new Film("0071562"),
+            new Film("0468569"),
+            new Film("0050083"),
+            new Film("0108052")];
+
+
 
         //TODO
         //METHOD
@@ -162,27 +184,32 @@ require_once 'users.php';
                 }
             }
             
-            //4.
-            //             if(count($recFilms) < 5){
-            
-            //             }
-            
-            
-            //             $freqs = array_count_values($recFilms);
-            //             $recFilmsFreq = array();
-            //             foreach($recFilms as $film){
-            //                 $recFilmsFreq = [
-            //                     $film => $freqs[$film]
-            
-            
-            //                 ];
-            //             }
-            
-            return $recFilms;
+
+
             
             
             
         }
+        if(count($recFilms) < 5 || $recFilms == null){
+            for ($i = 0; $i < 6 - count($recFilms); $i++){
+                if(!in_array($topFilms[$i], $filmsDisliked) && !in_array($topFilms[$i], $filmsLiked) && !in_array($topFilms[$i], $recFilms)){
+                    $recFilms[] = $topFilms[$i];
+                }
+            }
+        }
+
+
+        //             $freqs = array_count_values($recFilms);
+        //             $recFilmsFreq = array();
+        //             foreach($recFilms as $film){
+        //                 $recFilmsFreq = [
+        //                     $film => $freqs[$film]
+
+
+        //                 ];
+        //             }
+
+        return $recFilms;
         
         
         //Get all users that like that film

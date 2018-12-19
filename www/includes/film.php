@@ -1,7 +1,11 @@
 <?php
 
+require_once'functions.php';
+
 class Film{
-    
+
+
+
     private $_name;
     private $_filmID;
     private $_year;
@@ -18,7 +22,7 @@ class Film{
     /**
      * @param mixed $_imgPath
      */
-    public function setImgPath($_imgPath)
+    private function setImgPath($_imgPath)
     {
         $this->_imgPath = $_imgPath;
     }
@@ -59,7 +63,7 @@ class Film{
     /**
      * @param mixed $_name
      */
-    public function setName($_name)
+    private function setName($_name)
     {
         $this->_name = $_name;
     }
@@ -67,7 +71,7 @@ class Film{
     /**
      * @param mixed $_filmID
      */
-    public function setFilmID($_filmID)
+    private function setFilmID($_filmID)
     {
         $this->_filmID = $_filmID;
     }
@@ -75,7 +79,7 @@ class Film{
     /**
      * @param mixed $_year
      */
-    public function setYear($_year)
+    private function setYear($_year)
     {
         $this->_year = $_year;
     }
@@ -83,7 +87,7 @@ class Film{
     /**
      * @param mixed $_description
      */
-    public function setDescription($_description)
+    private function setDescription($_description)
     {
         $this->_description = $_description;
     }
@@ -98,6 +102,36 @@ class Film{
         $this->setImgPath($filmInfo->Poster);
         $this->setFilmID($filmID);
         
+    }
+
+    /**
+     * @return integer
+     */
+    function getTotalLikes(){
+        global $client;
+
+        $result = $client->run("MATCH (u:User)-[r:likes]->(f:Film) WHERE f.ID='" . $this->getFilmID() ."' RETURN r, COUNT(r) as no");
+        if($result->firstRecord() != null){
+            $number = $result->firstRecord()->value("no");
+        }
+
+        else{
+            $number = 0;
+        }
+        return $number;
+    }
+
+    function getTotalDislikes(){
+        global $client;
+        $result = $client->run("MATCH (u:User)-[r:dislikes]->(f:Film) WHERE f.ID='" . $this->getFilmID() ."' RETURN r, COUNT(r) as no");
+        if($result->firstRecord() != null){
+            $number = $result->firstRecord()->value("no");
+        }
+
+        else{
+            $number = 0;
+        }
+        return $number;
     }
 
     

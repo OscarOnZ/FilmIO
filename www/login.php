@@ -1,5 +1,5 @@
 <?php
-require_once( $_SERVER['DOCUMENT_ROOT']. "/www/includes/functions.php");
+require_once( $_SERVER['DOCUMENT_ROOT']. "/includes/functions.php");
 if(loginCheck()){
     header("Location: /index.php");
 }
@@ -14,20 +14,18 @@ if(loginCheck()){
 <link href="css/bootstrap-4.0.0.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css" integrity="sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns" crossorigin="anonymous">
 </head>
-
 <body>
-	<nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark"> <!--<Navbar>-->
 
-<div class="mx-auto order-0"> <!-- Middle --> 
-	<a class="navbar-brand mx-auto" href="#">
-		FilmIO
-	  </a>
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
-			<span class="navbar-toggler-icon"></span>
-		</button>
+<nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark"> <!--<Navbar>-->
+    <div class="mx-auto order-0"> <!-- Middle -->
+        <a class="navbar-brand mx-auto" href="#">
+            FilmIO
+          </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-</div>
-
+    </div>
 </nav> <!-- </Navbar> -->
 
 	
@@ -52,44 +50,45 @@ if(loginCheck()){
 		?>
 	
 	</div>
-		
-		
-		<div class="row">
-			<div class="col-6">
-		<div class="jumbotron jumbotron-fluid">
-		  <div class="container">
-			<h1 class="display-6">Welcome to FilmIO!</h1>
-			<p class="lead">The site to find new films from your friends.</p>
-			  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerModal">
-                  Sign Up
-              </button>
-		  </div>
+
+        <div class="row">
+
+        <div class="col-6">
+            <div class="jumbotron jumbotron-fluid">
+              <div class="container">
+                <h1 class="display-6">Welcome to FilmIO!</h1>
+                <p class="lead">The site to find new films from your friends.</p>
+                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#registerModal">
+                      Sign Up
+                  </button>
+              </div>
+            </div>
 		</div>
-		</div>
-		<div class="col-md-6">
-		<div class="card card-outline-secondary">
-                        <div class="card-header">
-                            <h3 class="mb-0">Login</h3>
+		<div class="col-6">
+            <div class="card card-outline-secondary">
+                            <div class="card-header">
+                                <h3 class="mb-0">Login</h3>
+                            </div>
+                            <div class="card-body">
+                                <form class="form-horizontal" method="post" action="includes/doLogin.php">
+                                    <div class="form-group">
+                                        <label for="email">Username</label>
+                                        <input type="text" class="form-control" name="Luname" id="Luname" required>
+                                        </div>
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input type="password" class="form-control" name="Lpass" id="Lpass" required autocomplete="new-password"/>
+                                    </div>
+                                    <button type="submit" class="btn btn-success btn-lg float-right" >Login</button>
+                                </form>
+                            </div>
+            </div>
+        </div>
+
+                            <!--/card-body-->
                         </div>
-                        <div class="card-body">
-                            <form class="form-horizontal" method="post" action="includes/doLogin.php">
-                                <div class="form-group">
-                                    <label for="email">Username</label>
-                                    <input type="text" class="form-control" name="Luname" id="Luname" required></div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Password</label>
-                                    <input type="password" class="form-control" name="Lpass" id="Lpass" required autocomplete="new-password"/>
-                                </div>
-                                <button type="submit" class="btn btn-success btn-lg float-right" >Login</button>
-                            </form>
-                        </div>
-                        <!--/card-body-->
-                    </div>
-                    <!-- /form card login -->
-		</div>
-		</div>
-	</div>
+                        <!-- /form card login -->
+    </div>
 	
 		<!-- Modal -->
     <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

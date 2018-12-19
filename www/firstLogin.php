@@ -93,8 +93,8 @@ if(loginCheck()== true){
                     <h5 class="card-title">' . $card->getName() . '</h5>
                     <p class="card-text">'. $card->getDescription() . '</p>
                     <div class="btn-group btn-group-lg" role="group">
-                    <button href="#" id="button' . $thisCard . '1" onClick="ratingClick(\'' . $thisCard . '\', \'' . $cards[$thisCard]->getFilmID() .'\', \'1\')" class="btn btn-success"><span class="fas fa-thumbs-up"></span></button>
-                    <a href="#" class="btn btn-danger button' . $thisCard . '-1"><span class="fas fa-thumbs-down"></span></a>
+                    <button href="#" id="button' . $thisCard . '1" onClick="ratingClick(this, \'' . $cards[$thisCard]->getFilmID() .'\', \'1\')" class="btn btn-success"><span class="fas fa-thumbs-up"></span></button>
+                    <a href="#" class="btn btn-danger button' . $thisCard . '-1" onClick="ratingClick(this, \'' . $cards[$thisCard]->getFilmID() .'\', \'-1\')"><span class="fas fa-thumbs-down"></span></a>
                     <a href="#" class="btn btn-primary">I haven\'t seen it</a>
 <div id="nowhere"></div>
                     </div>
@@ -110,34 +110,10 @@ if(loginCheck()== true){
 </div>
 	
 	
-	<script src="../js/jquery-3.2.1.min.js"></script>
-<script src="../js/popper.min.js"></script>
-<script src="../js/bootstrap-4.0.0.js"></script>
-
-			<script>
-                function ratingClick(cardNumber, filmID, score){
-                        alert("clicked");
-                        var id = "button" + cardNumber + score
-                        var element = document.getElementById(id);
-                        if(element){
-                        	$.ajax({
-        						type: 'GET',
-        						url: '/includes/createRelation.php',
-        						dataType: 'html',
-        						data: {type: 'userFilm', filmID: filmID, score: score},
-    							success: function(result){
-    								alert(id);
-    								$(element).addClass("disabled");
-    							}
-                            	});
-                        }
-                        else{
-                            alert("problem finding element");
-                        }
-                    	
-				};
-
-            </script>
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap-4.0.0.js"></script>
+<script src="js/ratingClick.js"></script>
 
 
 </body>
