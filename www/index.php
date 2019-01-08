@@ -46,7 +46,7 @@ if(loginCheck()== true){
 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2"> <!-- Right -->
 
 	<ul class="navbar-nav ml-auto">
-		<form class="form-inline my-2 my-lg-0" action="includes/searchBar.php" method="GET">
+		<form class="form-inline my-2 my-lg-0" action="searchBar.php" method="GET">
 		  <input class="form-control mr-sm-2" type="search" name="text" placeholder="Find a new film..." aria-label="Search"">
 		  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 		</form>

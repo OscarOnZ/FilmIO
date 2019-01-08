@@ -137,6 +137,12 @@ require_once 'users.php';
         return $friends;
     }
 
+    function findFriendsbyFilm($username, $filmID){
+        global $client;
+        $friends = array();
+        
+    }
+
 
     function getRecommendations($username){
         $recFilms = array();
