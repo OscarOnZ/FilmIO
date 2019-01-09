@@ -135,11 +135,11 @@ require_once 'db_connect.php';
             
         }   
         
-        public function existsInDB(){
+        private function existsInDB($user){
             global $client;
             //Check User doesn't exist.
             
-            $query = "MATCH(n:User) WHERE n.username = '" . $this->_username . "' RETURN COUNT(n) AS no;";
+            $query = "MATCH(n:User) WHERE n.username = '" . $user->_username . "' RETURN COUNT(n) AS no;";
             $result = $client->run($query);
             $noOfUsers = $result->firstRecord()->get('no');
             
@@ -157,7 +157,7 @@ require_once 'db_connect.php';
         public function createUser()
         {
             global $client;
-            if($this->existsInDB()){
+            if($this->existsInDB($this)){
                 return false;
             }
             else{
@@ -199,7 +199,6 @@ require_once 'db_connect.php';
          */
         public function getNumberOfFriends(){
             global $client;
-            $friends = array();
             $result = $client->run('MATCH(u:User), (u1:User) WHERE (u)-[:friends]-(u1) AND u.username="' . $this->_username . '" RETURN u1, COUNT(u1) as no');
             $number = $result->firstRecord()->value("no");
             return $number;
@@ -237,30 +236,91 @@ require_once 'db_connect.php';
         public function sendFriendRequest($user){
             if($this->existsInDB($user)){
                 global $client;
-                $client->run("MATCH(u:User), (u1:User) WHERE u.username = '" . $this->_username . "' AND u1.username ='" . $user->getUsername() . "' CREATE (u)-[:friends]-(u1)");
+                $client->run("MATCH(u:User), (u1:User) WHERE u.username = '" . $this->_username . "' AND u1.username ='" . $user->getUsername() . "' CREATE (u)-[:friendRequest]->(u1)");
+            }
+        }
+
+
+        public function acceptFriendRequest($user){
+            if($this->existsInDB($user)){
+                if($this->checkRelationExists($user,"friendReq")){
+                    global $client;
+                    $client->run("");
+                }
+
+            }
+        }
+
+        public function denyFriendRequest($user){
+            if($this->existsInDB($user)){
+                if($this->checkRelationExists($user,"friendReq")){
+                    global $client;
+                    $client->run("");
+                }
             }
         }
 
         /**
          * @param $film Film
+         * @return int;
          */
         public function likes($film){
-
+            if(!$this->checkRelationExists($film, "likes")){
+                global $client;
+                try{
+                    $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $this->_username .'" AND f.ID="'. $film->getFilmID() .'" CREATE (u)-[r:likes]->(f)');
+                    return 1; //Success
+                }catch(Exception $e) {
+                    return 0; //Error Code - Failed
+                }
+            }else{
+                return -1; //Error Code - Already Exists
+            }
         }
+
+        /**
+         * @param $film Film
+         * @return int;
+         */
+        public function dislikes($film){
+            if(!$this->checkRelationExists($film, "dislikes")){
+                global $client;
+                try{
+                    $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $this->_username .'" AND f.ID="'. $film->getFilmID() .'" CREATE (u)-[r:dislikes]->(f)');
+                    return 1; //Success
+                }catch(Exception $e) {
+                    return 0; //Error Code - Failed
+                }
+            }else{
+                return -1; //Error Code - Already Exists
+            }
+        }
+
+
 
         /**
          * @param $subject object
          * @param $linkType string
+         * @return bool
          */
         public function checkRelationExists($subject, $linkType){
-            if($linkType == "friends" || $linkType == "likes" || $linkType == "dislikes" || $linkType == "friendreq"){
-                if(get_class($subject) == "User"){
+            if($linkType == "friends" || $linkType == "likes" || $linkType == "dislikes" || $linkType == "friendReq"){ //TODO this wont work because freiendReq has direction - friend doesn't. Fix it
+                global $client;
+                if(get_class($subject) == "Film"){
+                    $result = $client->run('MATCH(u:User)-[r:'. $linkType . ']->(f:Film) WHERE u.username ="' . $this->_username . '" AND f.ID="' . $subject->getFilmID() . '"RETURN COUNT(r) as no');
+                    $number = $result->firstRecord()->value('no');
 
-
-                }else if(get_class($subject) == "Film"){
-
+                }else if(get_class($subject) == "User"){
+                    $result = $client->run('MATCH(u:User)-[r:'. $linkType . ']->(u1:User) WHERE u.username ="' . $this->_username . '" AND u1.username="' . $subject->getUsername() . '"RETURN COUNT(r) as no');
+                    $number = $result->firstRecord()->value('no');
                 }else{
+                    $number = 0;
+                }
 
+                if($number > 0){
+                    return true;
+                }else{
+                    return false;
                 }
             }
 

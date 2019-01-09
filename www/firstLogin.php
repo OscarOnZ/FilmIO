@@ -53,7 +53,7 @@ if(loginCheck()== true){
 
 	  <li class="nav-item dropdown">
 		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-		  <?php echo $_SESSION['fullName'];?>
+		  <?php echo $_SESSION['thisUser']->getFullName();?>
 		</a>
 		<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 		  <a class="dropdown-item" href="#">Change Password</a>
@@ -74,14 +74,15 @@ if(loginCheck()== true){
 	<div class="col-12">
 		<div class="jumbotron jumbotron-fluid">
 		  <div class="container">
-			<h1 class="display-4">Hello, <?php echo ucfirst($_SESSION['username']);?>!</h1>
+			<h1 class="display-4">Hello, <?php echo $_SESSION['thisUser']->getFullName()?>!</h1>
 			<p class="lead">Welcome to FilmIO! To help us get started please tell what you think of these films below:</p>
 		  </div>
 		</div>
 	</div>
 	
 	<?php 
-	
+	//TODO
+    // make $cards[] based on top films
 	$cards = array(new Film("0126029"), new Film("0377092"), new Film("0137523"));
 	$thisCard = 0;
 	foreach ($cards as $card){

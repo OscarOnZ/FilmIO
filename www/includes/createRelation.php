@@ -6,15 +6,20 @@ if(loginCheck()){
     if(isset($_GET['type'])){
         
         if($_GET['type'] == "userFilm"){
+
+
+            $thisUser = $_SESSION['thisUser'];
+            $thisFilm = new Film($_GET['filmID']);
+
+
             if(isset($_GET['score']) && $_GET['score'] == 1 && isset($_GET['filmID'])){ // Positive Rating
-                
-                createFilmUserLink($_SESSION['username'], $_GET['filmID'], "pos");
+                $thisUser->likes($thisFilm);
                 echo 'pos rating recorded ' . $_SESSION['username'] . ' ' . $_GET['filmID']; 
                 
             }
             else if(isset($_GET['score']) && $_GET['score'] == -1 && isset($_GET['filmID'])){ // Negative Rating
-                
-                createFilmUserLink($_SESSION['username'], $_GET['filmID'], "neg");
+
+                $thisUser->dislikes($thisFilm);
                 echo 'neg rating recorded'; 
             }
             else{

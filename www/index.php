@@ -53,7 +53,7 @@ if(loginCheck()== true){
 
 	  <li class="nav-item dropdown">
 		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-		  <?php echo $_SESSION['fullName'];?>
+		  <?php echo $_SESSION['thisUser']->getFullName();?>
 		</a>
 		<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 		  <a class="dropdown-item" href="#">My Profile</a>
@@ -75,7 +75,7 @@ if(loginCheck()== true){
 		<div class="col-12">
 			<div class="jumbotron jumbotron-fluid">
 			  <div class="container">
-				<h1 class="display-4">Hello, <?php echo ucfirst($_SESSION['username']);?>!</h1>
+				<h1 class="display-4">Hello, <?php echo ucfirst($_SESSION['thisUser']->getFullName());?>!</h1>
 				<p class="lead">Welcome back, here are your latest film recommendations</p>
 			  </div>
 			</div>
@@ -85,7 +85,7 @@ if(loginCheck()== true){
 	<div class="row">
 	<?php 
 	
-	$cards = getRecommendations($_SESSION['username']);
+	$cards = getRecommendations($_SESSION['thisUser']);
 	$cardsCount = 0;
 	try{
 	    foreach($cards as $card) {

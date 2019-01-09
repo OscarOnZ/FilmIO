@@ -22,9 +22,9 @@ require_once 'users.php';
     function loginCheck() {
         global $client;
         // Check if all session variables are set
-        if(isset($_SESSION['username'], $_SESSION['login_string'])) {
+        if(isset($_SESSION['thisUser'], $_SESSION['login_string'])) {
             $login_string = $_SESSION['login_string'];
-            $username = $_SESSION['username'];
+            $username = $_SESSION['thisUser']->getUsername();
             $ip_address = $_SERVER['REMOTE_ADDR']; // Get the IP address of the user.
             $user_browser = $_SERVER['HTTP_USER_AGENT']; // Get the user-agent string of the user.
             
@@ -49,52 +49,52 @@ require_once 'users.php';
             
     }
     
-    function checkRelationExists($username, $subject, $subjectType, $linkType){
-        global $client;
-        $number = -1;
-        if($linkType == "friends" || $linkType == "likes" || $linkType == "dislikes" || $linkType == "friendreq"){
-            if(strtolower($subjectType) == "film"){
-                $result = $client->run('MATCH(u:User)-[r:'. $linkType . ']->(f:Film) WHERE u.username ="' . $username . '" AND f.ID="' . $subject . '"RETURN COUNT(r) as no');
-                $number = $result->firstRecord()->value('no');
-                
-                
-            }else if(strtolower($subjectType) == "user"){
-                $result = $client->run('MATCH(u:User)-[r:'. $linkType . ']->(u1:User) WHERE u.username ="' . $username . '" AND u1.username="' . $subject . '"RETURN COUNT(r) as no');
-                $number = $result->firstRecord()->value('no');
-            }
-            
-            if($number > 0){
-                return true;
-            }else{
-                return false;
-            }
-            
-        }else{
-            return false;
-        }
-        
-        
-        
-    }
+//    function checkRelationExists($username, $subject, $subjectType, $linkType){
+//        global $client;
+//        $number = -1;
+//        if($linkType == "friends" || $linkType == "likes" || $linkType == "dislikes" || $linkType == "friendreq"){
+//            if(strtolower($subjectType) == "film"){
+//                $result = $client->run('MATCH(u:User)-[r:'. $linkType . ']->(f:Film) WHERE u.username ="' . $username . '" AND f.ID="' . $subject . '"RETURN COUNT(r) as no');
+//                $number = $result->firstRecord()->value('no');
+//
+//
+//            }else if(strtolower($subjectType) == "user"){
+//                $result = $client->run('MATCH(u:User)-[r:'. $linkType . ']->(u1:User) WHERE u.username ="' . $username . '" AND u1.username="' . $subject . '"RETURN COUNT(r) as no');
+//                $number = $result->firstRecord()->value('no');
+//            }
+//
+//            if($number > 0){
+//                return true;
+//            }else{
+//                return false;
+//            }
+//
+//        }else{
+//            return false;
+//        }
+//
+//
+//
+//    }
     
-    function createFilmUserLink($username, $filmID, $linkType){
-        global $client;
-        if($linkType == "pos"){
-            if(!checkRelationExists($username, $filmID, "film", "likes")){
-                $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $username .'" AND f.ID="'. $filmID .'" CREATE (u)-[r:likes]->(f)');
-            }
-            
-            
-            
-        }else if($linkType == "neg"){
-            if(!checkRelationExists($username, $filmID, "film", "dislikes")){
-                $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $username .'" AND f.ID="'. $filmID .'" CREATE (u)-[r:dislikes]->(f)');
-            }
-        }
-        else{
-            echo 'invalid Link Type';
-        }
-    }
+//    function createFilmUserLink($username, $filmID, $linkType){
+//        global $client;
+//        if($linkType == "pos"){
+//            if(!checkRelationExists($username, $filmID, "film", "likes")){
+//                $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $username .'" AND f.ID="'. $filmID .'" CREATE (u)-[r:likes]->(f)');
+//            }
+//
+//
+//
+//        }else if($linkType == "neg"){
+//            if(!checkRelationExists($username, $filmID, "film", "dislikes")){
+//                $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $username .'" AND f.ID="'. $filmID .'" CREATE (u)-[r:dislikes]->(f)');
+//            }
+//        }
+//        else{
+//            echo 'invalid Link Type';
+//        }
+//    }
 
     function createFriendLink($username1, $username2){
         //TODO

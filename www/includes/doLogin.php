@@ -42,11 +42,11 @@ startSession();
         // Set Session Vars
         $ip_address = $_SERVER['REMOTE_ADDR']; // Get the IP address of the user.
         $user_browser = $_SERVER['HTTP_USER_AGENT']; // Get the user-agent string of the user.
-        
-        $username = preg_replace("/[^a-zA-Z0-9_\-]+/", "", $username); // XSS protection as we might print this value
-        $fullName = preg_replace("/[^a-zA-Z0-9_\-\s]+/", "", $fullName); // XSS protection as we might print this value
-        $_SESSION['fullName'] = $fullName;
-        $_SESSION['username'] = $username;
+
+        /**
+         * @param $_SESSION['thisUser] User
+         */
+        $_SESSION['thisUser'] = new User($username);
         $_SESSION['login_string'] = hash('sha512', $db_password.$ip_address.$user_browser);
         
         
