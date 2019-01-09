@@ -13,7 +13,7 @@ require_once 'db_connect.php';
         private $_dateCreated;
         private $_fullName;
         /**
-         * @return mixed
+         * @return string
          */
         public function getFullName()
         {
@@ -21,7 +21,7 @@ require_once 'db_connect.php';
         }
     
         /**
-         * @return mixed
+         * @return string
          */
         public function getUsername()
         {
@@ -29,7 +29,7 @@ require_once 'db_connect.php';
         }
         
         /**
-         * @return mixed
+         * @return string
          */
         public function getPassword()
         {
@@ -37,7 +37,7 @@ require_once 'db_connect.php';
         }
         
         /**
-         * @return mixed
+         * @return string
          */
         public function getEmail()
         {
@@ -45,7 +45,7 @@ require_once 'db_connect.php';
         }
         
         /**
-         * @return mixed
+         * @return DateTime
          */
         public function getDob()
         {
@@ -53,7 +53,7 @@ require_once 'db_connect.php';
         }
         
         /**
-         * @return mixed
+         * @return DateTime
          */
         public function getDateCreated()
         {
@@ -61,7 +61,7 @@ require_once 'db_connect.php';
         }
         
         /**
-         * @param mixed $username
+         * @param string $username
          */
         public function setUsername($username)
         {
@@ -69,7 +69,7 @@ require_once 'db_connect.php';
         }
         
         /**
-         * @param mixed $password
+         * @param string $password
          */
         public function setPassword($password)
         {
@@ -77,7 +77,7 @@ require_once 'db_connect.php';
         }
         
         /**
-         * @param mixed $email
+         * @param string $email
          */
         public function setEmail($email)
         {
@@ -85,7 +85,7 @@ require_once 'db_connect.php';
         }
         
         /**
-         * @param mixed $dob
+         * @param DateTime $dob
          */
         public function setDob($dob)
         {
@@ -93,7 +93,7 @@ require_once 'db_connect.php';
         }
         
         /**
-         * @param mixed $dateCreated
+         * @param DateTime $dateCreated
          */
         public function setDateCreated($dateCreated)
         {
@@ -150,7 +150,10 @@ require_once 'db_connect.php';
                 return false;
             }
         }
-        
+
+        /**
+         * @return bool
+         */
         public function createUser()
         {
             global $client;
@@ -176,6 +179,93 @@ require_once 'db_connect.php';
                 
             }
         }
+
+        /**
+         * @return User[]
+         */
+        public function getFriends(){
+            global $client;
+            $friends = array();
+            $result = $client->run('MATCH(u:User), (u1:User) WHERE (u)-[:friends]-(u1) AND u.username="' . $this->_username . '" RETURN u1, u1.username as Username, COUNT(u1) as no');
+            foreach ($result->records() as $record){
+                $thisUser = new User($record->value("Username"));
+                $friends[] = $thisUser;
+            }
+            return $friends;
+        }
+
+        /**
+         * @return integer
+         */
+        public function getNumberOfFriends(){
+            global $client;
+            $friends = array();
+            $result = $client->run('MATCH(u:User), (u1:User) WHERE (u)-[:friends]-(u1) AND u.username="' . $this->_username . '" RETURN u1, COUNT(u1) as no');
+            $number = $result->firstRecord()->value("no");
+            return $number;
+        }
+
+        /**
+         * @return Film[]
+         */
+        public function getLikes(){
+            global $client;
+            $filmsLiked = array();
+            $result = $client->run('MATCH(u:User), (f:Film) WHERE (u)-[:likes]->(f) AND u.username="'. $this->_username .'" RETURN f, f.ID as ID, COUNT(f) as no');
+            foreach ($result->records() as $record){
+                $filmsLiked[] = new Film($record->value("ID"));
+            }
+            return $filmsLiked;
+        }
+
+        /**
+         * @return Film[]
+         */
+        public function getDislikes(){
+            global $client;
+            $filmsLiked = array();
+            $result = $client->run('MATCH(u:User), (f:Film) WHERE (u)-[:dislikes]->(f) AND u.username="'. $this->_username .'" RETURN f, f.ID as ID, COUNT(f) as no');
+            foreach ($result->records() as $record){
+                $filmsLiked[] = new Film($record->value("ID"));
+            }
+            return $filmsLiked;
+        }
+
+        /**
+         * @param User $user
+         */
+        public function sendFriendRequest($user){
+            if($this->existsInDB($user)){
+                global $client;
+                $client->run("MATCH(u:User), (u1:User) WHERE u.username = '" . $this->_username . "' AND u1.username ='" . $user->getUsername() . "' CREATE (u)-[:friends]-(u1)");
+            }
+        }
+
+        /**
+         * @param $film Film
+         */
+        public function likes($film){
+
+        }
+
+        /**
+         * @param $subject object
+         * @param $linkType string
+         */
+        public function checkRelationExists($subject, $linkType){
+            if($linkType == "friends" || $linkType == "likes" || $linkType == "dislikes" || $linkType == "friendreq"){
+                if(get_class($subject) == "User"){
+
+
+                }else if(get_class($subject) == "Film"){
+
+                }else{
+
+                }
+            }
+
+        }
+
     }
     
     
