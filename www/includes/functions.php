@@ -132,7 +132,7 @@ require_once 'users.php';
         $friends = array();
         $result = $client->run('MATCH(u:User), (u1:User) WHERE (u)-[:friends]-(u1) AND u.username="' . $username . '" RETURN u1, u1.username as Username, COUNT(u1) as no');
         foreach ($result->records() as $record){
-            $friends[] = $record->value("Username");
+            $friends[] = new User($record->value("Username"));
         }
         return $friends;
     }
@@ -140,6 +140,14 @@ require_once 'users.php';
     function findFriendsbyFilm($username, $filmID){
         global $client;
         $friends = array();
+        $result = $client->run('MATCH (u:User {username: "' . $username .'"})-[:likes]->(:Film {ID: \'' . $filmID . '\'})
+                <-[:likes]-(p:User),
+                (u)-[:friends]-(p)
+                RETURN p.username as Username');
+        foreach($result->records() as $record){
+            $friends[] = new User($record->value("Username"));
+        }
+        return $friends;
         
     }
 
@@ -174,7 +182,7 @@ require_once 'users.php';
         if(count($friends) > 0 && count($filmsLiked) > 0){
             
             foreach($friends as $friend){ //For every friend
-                $friendsLikedFilms = getFilmsUserLikes($friend); //Get the films they like
+                $friendsLikedFilms = getFilmsUserLikes($friend->getUsername()); //Get the films they like
                 foreach($filmsLiked as $film){ //For each of the films found
                     
                     if(in_array($film, $friendsLikedFilms)){ //Check if any friends liked that film

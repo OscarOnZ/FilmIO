@@ -11,12 +11,25 @@ if(!loginCheck()){
 
     if (isset($_GET['text'])) {
         global $client;
+
+        //Get Film Results
         $films = [];
         $result = $client->run("START n = node(*) WHERE lower(n.filmName) CONTAINS lower('" . $_GET['text'] . "') RETURN n, n.ID as filmID");
         $records = $result->records();
         foreach ($records as $record) {
             $films[] = $record->value("filmID");
         }
+
+        //Get User Results
+        $users = [];
+        $result = $client->run("START n = node(*) WHERE lower(n.username) CONTAINS lower('" . $_GET['text'] . "') OR lower(n.FullName) CONTAINS lower('" . $_GET['text'] . "') RETURN DISTINCT n, n.username as Username");
+        $records = $result->records();
+        foreach($records as $record){
+
+            $users[] = new User($record->value("Username"));
+
+        }
+
     }
     ?>
 
@@ -88,9 +101,12 @@ if(!loginCheck()){
         </nav> <!-- </Navbar> -->
     </div>
     <div class="container">
-        <p class="text-sm-right"> We found <?php echo(count($films)); ?> result(s)</p>
-        <?php
+        <p class="text-sm-right"> We found <?php echo(count($films) + count($users)); ?> result(s)</p>
 
+        <?php
+        if(count($films) > 0){
+            echo'<h3 class="text-center">Films</h3>';
+        }
         foreach ($films as $film) {
             $thisFilm = new Film($film);
             echo'
@@ -104,6 +120,32 @@ if(!loginCheck()){
         <hr>';
 
         } ?>
+
+
+
+            <?php
+            if(count($users) > 0){
+                echo'<h3 class="text-center">Users</h3><div class="row">';
+
+
+            foreach ($users as $user) {
+                echo'
+        <div class="col">
+            <div class="card">
+                <h5 class="card-header">' . $user->getFullName() .'</h5>
+                <div class="card-body">
+                    <p class="card-text"></p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
+        </div>
+        <hr>';
+
+            }} ?>
+
+
+        </div>
+
 
 
     </div>

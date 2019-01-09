@@ -3,7 +3,7 @@
     
 require_once 'db_connect.php';
     
-    class user
+    class User
     {
         
         private $_username;
@@ -112,11 +112,23 @@ require_once 'db_connect.php';
                 $this->_dob = func_get_arg(4);
                 $this->_dateCreated = func_get_arg(5);
             }
-            else{
-                
+            else if($numargs == 2){
+
                 $this->_username = func_get_arg(0);
                 $this->_password = password_hash(func_get_arg(1), PASSWORD_DEFAULT);
-                
+
+            }
+            else{
+                $this->_username =func_get_arg(0);
+                global $client;
+
+                //Get non-sensitive data from db (not the hashed password)
+
+                $result = $client->run("MATCH (n:User) WHERE n.username = '" . $this->_username ."' RETURN n.dateCreated as DateCreated, n.DOB as DOB, n.email as Email, n.fullName as FullName");
+                $this->_dateCreated = $result->firstRecord()->value("DateCreated");
+                $this->_dob = $result->firstRecord()->value("DOB");
+                $this->_email= $result->firstRecord()->value("Email");
+                $this->_fullName = $result->firstRecord()->value("FullName");
             }
             
             
