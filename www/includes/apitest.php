@@ -5,4 +5,4 @@ if(checkRelationExists("oscar", "1300854", "film", "likes")){
 }else{
     echo "false";
 }
-?>
+

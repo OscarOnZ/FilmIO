@@ -22,7 +22,7 @@ if(loginCheck()== true){
 <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2"><!-- Left --> 
 	<ul class="navbar-nav mr-auto">
 		<li class="nav-item">
-			<a class="nav-link" href="#"><span class="fas fa-film"></span> Your Films</a>
+			<a class="nav-link" href="index.php"><span class="fas fa-film"></span> Your Films</a>
 		</li>
 
 		<li class="nav-item">
@@ -35,7 +35,7 @@ if(loginCheck()== true){
 	</ul>
 </div>
 <div class="mx-auto order-0"> <!-- Middle --> 
-	<a class="navbar-brand mx-auto" href="localhost">
+	<a class="navbar-brand mx-auto" href="index.php">
 		FilmIO
 	  </a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
@@ -46,8 +46,8 @@ if(loginCheck()== true){
 <div class="navbar-collapse collapse w-100 order-3 dual-collapse2"> <!-- Right -->
 
 	<ul class="navbar-nav ml-auto">
-		<form class="form-inline my-2 my-lg-0">
-		  <input class="form-control mr-sm-2" type="search" placeholder="Find a new film..." aria-label="Search">
+		<form class="form-inline my-2 my-lg-0" action="searchBar.php" method="GET">
+		  <input class="form-control mr-sm-2" type="search" placeholder="Find a new film..." aria-label="Search" name="text">
 		  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 		</form>
 
@@ -115,6 +115,7 @@ if(loginCheck()== true){
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap-4.0.0.js"></script>
 <script src="js/ratingClick.js"></script>
+<script src="js/searchBar.js"></script>
 
 
 </body>

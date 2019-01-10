@@ -85,7 +85,7 @@ if(loginCheck()== true){
 	<div class="row">
 	<?php 
 	
-	$cards = getRecommendations($_SESSION['thisUser']);
+	$cards = $_SESSION['thisUser']->getRecommendations();
 	$cardsCount = 0;
 	try{
 	    foreach($cards as $card) {

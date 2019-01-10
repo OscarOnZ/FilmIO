@@ -15,7 +15,7 @@ startSession();
     $user = new user($username, $password);
     
     //Check Username exists in DB
-    if(!$user->existsInDB())
+    if(!$user->existsInDB($user))
     {
         header("Location: ". $_SERVER["DOCUMENT_ROOT"] . "/login.php");
     }else
@@ -44,7 +44,7 @@ startSession();
         $user_browser = $_SERVER['HTTP_USER_AGENT']; // Get the user-agent string of the user.
 
         /**
-         * @param $_SESSION['thisUser] User
+         * @param User $_SESSION['thisUser]
          */
         $_SESSION['thisUser'] = new User($username);
         $_SESSION['login_string'] = hash('sha512', $db_password.$ip_address.$user_browser);
@@ -67,4 +67,3 @@ startSession();
     
     
 
-?>

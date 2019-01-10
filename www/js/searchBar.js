@@ -13,7 +13,7 @@ function showSuggestions(string){
         if (this.readyState==4 && this.status==200) {
             ele.innerHTML=this.responseText;
         }
-    }
+    };
     XMLHttp.open("GET", "../includes/searchBar.php?text="+string, true);
     XMLHttp.send();
 }

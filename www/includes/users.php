@@ -99,7 +99,10 @@ require_once 'db_connect.php';
         {
             $this->_dateCreated = $dateCreated;
         }
-        
+
+        /**
+         * User constructor.
+         */
         function __construct() //$fullName, $username, $password, $email, $dob, $datecreated
         {
             $numargs = func_num_args();
@@ -133,9 +136,14 @@ require_once 'db_connect.php';
             
             
             
-        }   
-        
-        private function existsInDB($user){
+        }
+
+        /**
+         * @param User $user
+         * @return bool
+         *
+         */
+        public function existsInDB($user){
             global $client;
             //Check User doesn't exist.
             
@@ -212,7 +220,9 @@ require_once 'db_connect.php';
             $filmsLiked = array();
             $result = $client->run('MATCH(u:User), (f:Film) WHERE (u)-[:likes]->(f) AND u.username="'. $this->_username .'" RETURN f, f.ID as ID, COUNT(f) as no');
             foreach ($result->records() as $record){
-                $filmsLiked[] = new Film($record->value("ID"));
+                if($record != null){ //
+                    $filmsLiked[] = new Film($record->value("ID"));
+                }
             }
             return $filmsLiked;
         }
@@ -240,28 +250,44 @@ require_once 'db_connect.php';
             }
         }
 
-
+        /**
+         * @param User $user
+         */
         public function acceptFriendRequest($user){
             if($this->existsInDB($user)){
                 if($this->checkRelationExists($user,"friendReq")){
                     global $client;
-                    $client->run("");
+                    $client->run("MATCH (u1:User)-[r:friendRequest]->(u:User) WHERE u1.username = '" . $user->getUsername() . "' AND u.username = '" . $this->_username . "' DELETE r");
+                    $client->run("MATCH(u:User), (u1:User) WHERE u.username = '" . $this->_username . "' AND u1.username ='" . $user->getUsername() . "' CREATE (u)-[:friends]-(u1)");
                 }
 
             }
         }
-
+        /**
+         * @param User $user
+         */
         public function denyFriendRequest($user){
             if($this->existsInDB($user)){
                 if($this->checkRelationExists($user,"friendReq")){
                     global $client;
-                    $client->run("");
+                    $client->run("MATCH (u1:User)-[r:friendRequest]->(u:User) WHERE u1.username = '" . $user->getUsername() . "' AND u.username = '" . $this->_username . "' DELETE r");
+                }
+            }
+        }
+        /**
+         * @param User $user
+         */
+        public function unfriend($user){
+            if($this->existsInDB($user)){
+                if($this->checkRelationExists($user, "friends")){
+                    global $client;
+                    $client->run("MATCH (u1:User)-[r:friends]-(u:User) WHERE u1.username = '" . $user->getUsername() . "' AND u.username = '" . $this->_username . "' DELETE r");
                 }
             }
         }
 
         /**
-         * @param $film Film
+         * @param Film $film
          * @return int;
          */
         public function likes($film){
@@ -279,7 +305,7 @@ require_once 'db_connect.php';
         }
 
         /**
-         * @param $film Film
+         * @param Film $film
          * @return int;
          */
         public function dislikes($film){
@@ -299,19 +325,23 @@ require_once 'db_connect.php';
 
 
         /**
-         * @param $subject object
-         * @param $linkType string
+         * @param object $subject
+         * @param string $linkType
          * @return bool
          */
         public function checkRelationExists($subject, $linkType){
-            if($linkType == "friends" || $linkType == "likes" || $linkType == "dislikes" || $linkType == "friendReq"){ //TODO this wont work because freiendReq has direction - friend doesn't. Fix it
+            if($linkType == "friends" || $linkType == "likes" || $linkType == "dislikes" || $linkType == "friendReq"){
                 global $client;
                 if(get_class($subject) == "Film"){
                     $result = $client->run('MATCH(u:User)-[r:'. $linkType . ']->(f:Film) WHERE u.username ="' . $this->_username . '" AND f.ID="' . $subject->getFilmID() . '"RETURN COUNT(r) as no');
                     $number = $result->firstRecord()->value('no');
 
-                }else if(get_class($subject) == "User"){
-                    $result = $client->run('MATCH(u:User)-[r:'. $linkType . ']->(u1:User) WHERE u.username ="' . $this->_username . '" AND u1.username="' . $subject->getUsername() . '"RETURN COUNT(r) as no');
+                }else if(get_class($subject) == "User" && $linkType == "friends"){
+                    $result = $client->run('MATCH(u:User)-[r:'. $linkType . ']-(u1:User) WHERE u.username ="' . $this->_username . '" AND u1.username="' . $subject->getUsername() . '"RETURN COUNT(r) as no');
+                    $number = $result->firstRecord()->value('no');
+                }
+            else if(get_class($subject) == "User" && $linkType == "friendReq"){
+                    $result = $client->run('MATCH(u1:User)-[r:'. $linkType . ']->(u:User) WHERE u.username ="' . $this->_username . '" AND u1.username="' . $subject->getUsername() . '"RETURN COUNT(r) as no');
                     $number = $result->firstRecord()->value('no');
                 }else{
                     $number = 0;
@@ -322,9 +352,94 @@ require_once 'db_connect.php';
                 }else{
                     return false;
                 }
+            }else{
+                return false;
             }
 
         }
+
+        public function getRecommendations(){
+            $recFilms = array();
+            $topFilms = [new Film("0111161"),
+                        new Film("0068646"),
+                        new Film("0071562"),
+                        new Film("0468569"),
+                        new Film("0050083"),
+                        new Film("0108052")];
+
+
+
+            //TODO
+            //METHOD
+            //1. Get all films user has liked.
+            //2. Check if any of the user's friends like that film
+            //IF has friends
+            //3. Recommend a film that the friend likes
+            //ELSE
+            //4. Recommend a top film
+            //6. RETURN 5 films
+
+            //1.
+            $filmsLiked = $this->getLikes();
+            $filmsDisliked = $this->getDislikes();
+            //2.
+            $friends = $this->getFriends();
+
+            if(count($friends) > 0 && count($filmsLiked) > 0){
+
+                foreach($friends as $friend){ //For every friend
+                    $friendsLikedFilms = $friend->getLikes(); //Get the films they like
+                    foreach($filmsLiked as $film){ //For each of the films found
+
+                        if(in_array($film, $friendsLikedFilms)){ //Check if any friends liked that film
+                            //3.
+                            foreach ($friendsLikedFilms as $friendFilm){ //For each film the friend liked
+                                if(!in_array($friendFilm, $filmsDisliked) && !in_array($friendFilm, $filmsLiked) && !in_array($friendFilm, $recFilms)){ // make sure i haven't seen it
+                                    $recFilms[] = $friendFilm;
+                                }
+
+                            }
+
+                        }
+                    }
+                }
+
+
+
+
+
+
+            }
+            if(count($recFilms) < 5 || $recFilms == null){
+                for ($i = 0; $i < 6 - count($recFilms); $i++){
+                    if(!in_array($topFilms[$i], $filmsDisliked) && !in_array($topFilms[$i], $filmsLiked) && !in_array($topFilms[$i], $recFilms)){
+                        $recFilms[] = $topFilms[$i];
+                    }
+                }
+            }
+
+
+            //             $freqs = array_count_values($recFilms);
+            //             $recFilmsFreq = array();
+            //             foreach($recFilms as $film){
+            //                 $recFilmsFreq = [
+            //                     $film => $freqs[$film]
+
+
+            //                 ];
+            //             }
+
+            return $recFilms;
+
+
+            //Get all users that like that film
+            //Recommend film that them users like
+            //RETURN 5 films
+
+            //6.
+        }
+
+
 
     }
     

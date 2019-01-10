@@ -91,7 +91,11 @@ class Film{
     {
         $this->_description = $_description;
     }
-    
+
+    /**
+     * Film constructor.
+     * @param $filmID
+     */
     function __construct($filmID){
         global $apiKey;
         $data = file_get_contents("http://www.omdbapi.com/?apikey=". $apiKey ."&i=tt". $filmID);
@@ -107,7 +111,7 @@ class Film{
     /**
      * @return integer
      */
-    function getTotalLikes(){
+    public function getTotalLikes(){
         global $client;
 
         $result = $client->run("MATCH (u:User)-[r:likes]->(f:Film) WHERE f.ID='" . $this->getFilmID() ."' RETURN r, COUNT(r) as no");
@@ -121,7 +125,7 @@ class Film{
         return $number;
     }
 
-    function getTotalDislikes(){
+    public function getTotalDislikes(){
         global $client;
         $result = $client->run("MATCH (u:User)-[r:dislikes]->(f:Film) WHERE f.ID='" . $this->getFilmID() ."' RETURN r, COUNT(r) as no");
         if($result->firstRecord() != null){
@@ -133,6 +137,29 @@ class Film{
         }
         return $number;
     }
+
+    /**
+     * @param User $user
+     * @return User[]
+     */
+    public function friendsThatLikeThis($user){
+        if($user->existsInDB($user)){
+            global $client;
+            $friends = array();
+            $result = $client->run('MATCH (u:User {username: "' . $user->getUsername() .'"})-[:likes]->
+            (:Film {ID: \'' . $this->getFilmID() . '\'})
+                <-[:likes]-(p:User),
+                (u)-[:friends]-(p)
+                RETURN p.username as Username');
+            foreach($result->records() as $record){
+                $friends[] = new User($record->value("Username"));
+            }
+            return $friends;
+        }
+        return null;
+    }
+
+
 
     
     

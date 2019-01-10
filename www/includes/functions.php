@@ -2,10 +2,6 @@
 require_once 'db_connect.php';
 require_once 'film.php';
 require_once 'users.php';
-
-
-
-
     function startSession() {
         $session_name = 'FilmIO';
         $secure = false;
@@ -95,14 +91,6 @@ require_once 'users.php';
 //            echo 'invalid Link Type';
 //        }
 //    }
-
-    function createFriendLink($username1, $username2){
-        //TODO
-    }
-
-    function unfriend($username1, $username2){
-        //TODO
-    }
     
 //       function getFilmsUserLikes($username){
 //        global $client;
@@ -113,7 +101,6 @@ require_once 'users.php';
 //        }
 //        return $filmsLiked;
 //    }
-
 //    function getFilmsUserDislikes($username){
 //        global $client;
 //        $filmsDisliked = array();
@@ -123,7 +110,6 @@ require_once 'users.php';
 //        }
 //        return $filmsDisliked;
 //    }
-    
 //    function getUsersFriends($username){
 //        global $client;
 //        $friends = array();
@@ -133,117 +119,97 @@ require_once 'users.php';
 //        }
 //        return $friends;
 //    }
-
-
-/**
- * @param $thisUser User
- * @param $thisFilm Film
- * @return array User[]
- */
-function findFriendsbyFilm($thisUser, $thisFilm){
-        global $client;
-        $friends = array();
-        $result = $client->run('MATCH (u:User {username: "' . $thisUser->getUsername() .'"})-[:likes]->(:Film {ID: \'' . $thisFilm->getFilmID() . '\'})
-                <-[:likes]-(p:User),
-                (u)-[:friends]-(p)
-                RETURN p.username as Username');
-        foreach($result->records() as $record){
-            $friends[] = new User($record->value("Username"));
-        }
-        return $friends;
-        
-    }
-
-
-/**
- * @param $thisUser User
- * @return Film[]
- */
-function getRecommendations($thisUser){
-        $recFilms = array();
-        $topFilms = [new Film("0111161"),
-            new Film("0068646"),
-            new Film("0071562"),
-            new Film("0468569"),
-            new Film("0050083"),
-            new Film("0108052")];
-
-
-
-        //TODO
-        //METHOD
-        //1. Get all films user has liked.
-        //2. Check if any of the user's friends like that film
-        //IF has friends
-        //3. Recommend a film that the friend likes
-        //ELSE
-        //4. Recommend a top film
-        //6. RETURN 5 films
-        
-        //1.
-        $filmsLiked = $thisUser->getLikes();
-        $filmsDisliked = $thisUser->getDislikes();
-        //2. 
-        $friends = $thisUser->getFriends();
-
-        if(count($friends) > 0 && count($filmsLiked) > 0){
-            
-            foreach($friends as $friend){ //For every friend
-                $friendsLikedFilms = $friend->getLikes(); //Get the films they like
-                foreach($filmsLiked as $film){ //For each of the films found
-                    
-                    if(in_array($film, $friendsLikedFilms)){ //Check if any friends liked that film
-                        //3.
-                        foreach ($friendsLikedFilms as $friendFilm){ //For each film the friend liked
-                            if(!in_array($friendFilm, $filmsDisliked) && !in_array($friendFilm, $filmsLiked) && !in_array($friendFilm, $recFilms)){ // make sure i haven't seen it
-                                $recFilms[] = $friendFilm;
-                            }
-                            
-                        }
-                        
-                    }
-                }
-            }
-            
-
-
-            
-            
-            
-        }
-        if(count($recFilms) < 5 || $recFilms == null){
-            for ($i = 0; $i < 6 - count($recFilms); $i++){
-                if(!in_array($topFilms[$i], $filmsDisliked) && !in_array($topFilms[$i], $filmsLiked) && !in_array($topFilms[$i], $recFilms)){
-                    $recFilms[] = $topFilms[$i];
-                }
-            }
-        }
-
-
-        //             $freqs = array_count_values($recFilms);
-        //             $recFilmsFreq = array();
-        //             foreach($recFilms as $film){
-        //                 $recFilmsFreq = [
-        //                     $film => $freqs[$film]
-
-
-        //                 ];
-        //             }
-
-        return $recFilms;
-        
-        
-        //Get all users that like that film
-        //Recommend film that them users like
-        //RETURN 5 films
-        
-        //6.
-        return $recFilms;
-    }
+///**
+// * @param $thisUser User
+// * @param $thisFilm Film
+// * @return array User[]
+// */
+//function findFriendsbyFilm($thisUser, $thisFilm){
+//        global $client;
+//        $friends = array();
+//        $result = $client->run('MATCH (u:User {username: "' . $thisUser->getUsername() .'"})-[:likes]->(:Film {ID: \'' . $thisFilm->getFilmID() . '\'})
+//                <-[:likes]-(p:User),
+//                (u)-[:friends]-(p)
+//                RETURN p.username as Username');
+//        foreach($result->records() as $record){
+//            $friends[] = new User($record->value("Username"));
+//        }
+//        return $friends;
+//
+//    }
+///**
+// * @param $thisUser User
+// * @return Film[]
+// */
+//function getRecommendations($thisUser){
+//        $recFilms = array();
+//        $topFilms = [new Film("0111161"),
+//            new Film("0068646"),
+//            new Film("0071562"),
+//            new Film("0468569"),
+//            new Film("0050083"),
+//            new Film("0108052")];
+//        //METHOD
+//        //1. Get all films user has liked.
+//        //2. Check if any of the user's friends like that film
+//        //IF has friends
+//        //3. Recommend a film that the friend likes
+//        //ELSE
+//        //4. Recommend a top film
+//        //6. RETURN 5 films
+//
+//        //1.
+//        $filmsLiked = $thisUser->getLikes();
+//        $filmsDisliked = $thisUser->getDislikes();
+//        //2.
+//        $friends = $thisUser->getFriends();
+//
+//        if(count($friends) > 0 && count($filmsLiked) > 0){
+//
+//            foreach($friends as $friend){ //For every friend
+//                $friendsLikedFilms = $friend->getLikes(); //Get the films they like
+//                foreach($filmsLiked as $film){ //For each of the films found
+//
+//                    if(in_array($film, $friendsLikedFilms)){ //Check if any friends liked that film
+//                        //3.
+//                        foreach ($friendsLikedFilms as $friendFilm){ //For each film the friend liked
+//                            if(!in_array($friendFilm, $filmsDisliked) && !in_array($friendFilm, $filmsLiked) && !in_array($friendFilm, $recFilms)){ // make sure i haven't seen it
+//                                $recFilms[] = $friendFilm;
+//                            }
+//
+//                        }
+//
+//                    }
+//                }
+//            }
+//        }
+//        if(count($recFilms) < 5 || $recFilms == null){
+//            for ($i = 0; $i < 6 - count($recFilms); $i++){
+//                if(!in_array($topFilms[$i], $filmsDisliked) && !in_array($topFilms[$i], $filmsLiked) && !in_array($topFilms[$i], $recFilms)){
+//                    $recFilms[] = $topFilms[$i];
+//                }
+//            }
+//        }
+//
+//
+//        //             $freqs = array_count_values($recFilms);
+//        //             $recFilmsFreq = array();
+//        //             foreach($recFilms as $film){
+//        //                 $recFilmsFreq = [
+//        //                     $film => $freqs[$film];
+//        //                 ];
+//        //             }
+//        return $recFilms;
+//        //Get all users that like that film
+//        //Recommend film that them users like
+//        //RETURN 5 films
+//
+//        //6.
+//        return $recFilms;
+//    }
 
 
 
 
 
 
-?>

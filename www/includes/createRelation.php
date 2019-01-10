@@ -4,11 +4,11 @@ require_once( $_SERVER['DOCUMENT_ROOT']. "./includes/functions.php");
 startSession();
 if(loginCheck()){
     if(isset($_GET['type'])){
-        
+        $thisUser = $_SESSION['thisUser'];
         if($_GET['type'] == "userFilm"){
 
 
-            $thisUser = $_SESSION['thisUser'];
+
             $thisFilm = new Film($_GET['filmID']);
 
 
@@ -26,8 +26,12 @@ if(loginCheck()){
                 echo 'invalid score';
             }
         }
+        else if($_GET['type'] == "userUser"){
+            $requestToUser = new User($_GET['username']);
+            $thisUser->sendFriendRequest($requestToUser);
+        }
         else{
-            echo 'userFilm not set';
+            echo 'invalid type';
         }
         
     }else{

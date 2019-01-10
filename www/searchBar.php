@@ -52,7 +52,7 @@ if(!loginCheck()){
             <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2"><!-- Left -->
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><span class="fas fa-film"></span> Your Films</a>
+                        <a class="nav-link" href="index.php"><span class="fas fa-film"></span> Your Films</a>
                     </li>
 
                     <li class="nav-item">
@@ -65,7 +65,7 @@ if(!loginCheck()){
                 </ul>
             </div>
             <div class="mx-auto order-0"> <!-- Middle -->
-                <a class="navbar-brand mx-auto" href="#">
+                <a class="navbar-brand mx-auto" href="index.php">
                     FilmIO
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
@@ -106,7 +106,7 @@ if(!loginCheck()){
         <?php
         if(count($films) > 0){
             echo'<h3 class="text-center">Films</h3>';
-        }
+
         foreach ($films as $film) {
             $thisFilm = new Film($film);
             echo'
@@ -114,18 +114,19 @@ if(!loginCheck()){
             <h5 class="card-header">' . $thisFilm->getName()  . '</h5>
             <div class="card-body">
                 <p class="card-text">' . $thisFilm->getDescription() . '</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <a href="viewFilm.php?id=' . $thisFilm->getFilmID() . '" class="btn btn-primary">View This Film</a>
             </div>
         </div>
-        <hr>';
+        <hr>';}
+
 
         } ?>
 
 
 
-            <?php
-            if(count($users) > 0){
-                echo'<h3 class="text-center">Users</h3><div class="row">';
+        <?php
+        if(count($users) > 0){
+            echo'<h3 class="text-center">Users</h3><div class="row">';
 
 
             foreach ($users as $user) {
@@ -135,7 +136,9 @@ if(!loginCheck()){
                 <h5 class="card-header">' . $user->getFullName() .'</h5>
                 <div class="card-body">
                     <p class="card-text"></p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                    <a href="viewUser.php?username=' . $user->getUsername() . '" class="btn btn-primary">View Profile</a>
+                    <a href="#" class="btn btn-primary" onClick="friendReqClick(this, \'' . $user->getUsername() .'\')">
+                    Send Friend Request</a>
                 </div>
             </div>
         </div>
@@ -144,11 +147,17 @@ if(!loginCheck()){
             }} ?>
 
 
-        </div>
+    </div>
 
 
 
     </div>
+
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap-4.0.0.js"></script>
+    <script src="js/friendReqClick.js"></script>
+
 
 
 
