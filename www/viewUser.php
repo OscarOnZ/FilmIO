@@ -136,8 +136,9 @@ if(loginCheck()) {
                     Do you know <?php echo $user->getFirstName() ?>?
                 </div>
                 <div class="card-body text-center">
-                    <button type="button" class="btn btn-success" id="buttonLike" onclick="ratingClick(this, '<?php echo $_GET['id'] ?>', '1')"> I like this film</button>
-                    <button type="button" class="btn btn-danger" id="buttonDislike" onclick="ratingClick(this, '<?php echo $_GET['id'] ?>', '-1')"> I dislike this film</button>
+                    <a href="" class="btn btn-primary" onClick="friendReqClick(this, <?php $user->getUsername() ?>)">
+                        Send Friend Request</a>
+
                 </div>
             </div>
         </div>
@@ -145,12 +146,13 @@ if(loginCheck()) {
 </div>
 
 
-<?php $_SESSION['thisUser']->newGetRecommendations(); ?>
+
 
 <script src="js/jquery-3.2.1.min.js"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap-4.0.0.js"></script>
 <script src="js/searchBar.js"></script>
+<script src="js/friendReqClick.js"></script>
 </body>
 
 <footer>

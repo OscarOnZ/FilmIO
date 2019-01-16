@@ -361,13 +361,7 @@ require_once 'db_connect.php';
          */
         public function dislikes($film){
             if(!$this->checkRelationExists($film, "dislikes")){
-                global $client;
-                try{
-                    $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $this->_username .'" AND f.ID="'. $film->getFilmID() .'" CREATE (u)-[r:dislikes]->(f)');
-                    return 1; //Success
-                }catch(Exception $e) {
-                    return 0; //Error Code - Failed
-                }
+
             }else{
                 return -1; //Error Code - Already Exists
             }
@@ -514,45 +508,105 @@ require_once 'db_connect.php';
 
             //1 & 2
             //friends[friendNumber]["friend"] returns friend class
-            //friends[friendNumber][1] returns friend score
-            //friends[friendNumber][2] returns the films that friend likes
+            //friends[friendNumber]['score'] returns friend score
+            //friends[friendNumber]['films'] returns the films that friend likes
             $friends = array();
+            $nFriends = 0;
             foreach($this->getFriends() as $friend){
                 $friends[] = array("friend" => $friend, "score" => 0, "films" => $friend->getLikes());
+                $nFriends++;
             }
 
             $userLikes = $this->getLikes();
 
             $userDislikes = $this->getDislikes();
 
-            //thisFriend[1] returns friend score
-            //thisFriend[2] returns the films that friend likes
+            //thisFriend['score'] returns friend score
+            //thisFriend['films'] returns the films that friend likes
 
 
-            foreach($friends as $thisFriend){
-                foreach($thisFriend['films'] as $thisFilm){
-                    if(in_array($thisFilm, $userLikes)){
-                        $thisFriend['score']++;
-                    }
-                    else if(in_array($thisFilm, $userDislikes)){
-                        $thisFriend['score']--;
+
+                for($i = 0; $i < $nFriends; $i++){
+                    foreach($friends[$i]['films'] as $thisFilm){
+                        if(in_array($thisFilm, $userLikes)){
+                            $friends[$i]['score']++;
+                            echo $friends[$i]['friend']->getUsername() . " score increased to " . $friends[$i]['score'] . "\n";
+                        }
+                        else if(in_array($thisFilm, $userDislikes)){
+                            $friends[$i]['score']--;
+                            echo $friends[$i]['friend']->getUsername() . " score decreased to " . $friends[$i]['score'] . "\n";
+                        }
                     }
                 }
-            }
 
-            usort($friends, function($a, $b) {
-                return $a['score'] <=> $b['score'];
-            });
 
             foreach($friends as $thisFriend){
                 echo($thisFriend['friend']->getFirstName() . " " . $thisFriend['score'] . "\n");
             }
 
 
+            usort($friends, function($a, $b) {
+                return $a['score'] <=> $b['score'];
+            });
+
+
+            //6
+            $nFriendsToLookAt = 0;
+            if($nFriends > 3) {
+                $nFriendsToLookAt = 3;
+            }else{
+                $nFriendsToLookAt = $nFriends;
+            }
+
+            $allFilmsUserSeen = array_merge($userLikes, $userDislikes);
+            $recommendedFilms = $this->getXFilms(5, $nFriendsToLookAt, $friends, $nFriends);
+            $finalFilms = [];
+            foreach($recommendedFilms as $film){
+                if(!in_array($film, $allFilmsUserSeen)){
+                    $finalFilms[] = $film;
+                }
+            }
 
 
 
 
+
+            return $finalFilms;
+
+        }
+
+        /**
+         * @param $x
+         * @param $n
+         * @param $friends
+         * @return void
+         */
+        private function getXFilms($x, $n, $friends, $nFriends){
+            $topFilms = [];
+            for ($i = 0; $i < $n; $i++){
+                foreach($friends[$i]['films'] as $thisFilm){
+                    if(in_array($thisFilm, $topFilms)){
+                        $key = array_search(($thisFilm), $topFilms);
+                        $topFilms[$key]['score']++;
+                    }else{
+                        $topFilms[] = array($thisFilm, "score" => 0);
+                    }
+                }
+            }
+
+            if($topFilms > $x){
+                echo "Number of films recommended:" . count($topFilms);
+                return array_column($topFilms, 0);
+            }
+            else{
+                echo "not enough films";
+                if($n + 2 > $nFriends){
+                    return array_column($topFilms, 0);
+                }else{
+                    $this->getXFilms($x, $n + 2, $friends);
+                }
+
+            }
 
 
         }
