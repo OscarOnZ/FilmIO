@@ -133,7 +133,7 @@ if(loginCheck()) {
             <div style="padding: 15px"></div>
             <div class="card">
                 <div class="card-header">
-                    Have you seen this film?
+                    Do you know <?php echo $user->getFirstName() ?>?
                 </div>
                 <div class="card-body text-center">
                     <button type="button" class="btn btn-success" id="buttonLike" onclick="ratingClick(this, '<?php echo $_GET['id'] ?>', '1')"> I like this film</button>
@@ -144,6 +144,8 @@ if(loginCheck()) {
     </div>
 </div>
 
+
+<?php $_SESSION['thisUser']->newGetRecommendations(); ?>
 
 <script src="js/jquery-3.2.1.min.js"></script>
 <script src="js/popper.min.js"></script>

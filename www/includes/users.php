@@ -12,6 +12,40 @@ require_once 'db_connect.php';
         private $_dob;
         private $_dateCreated;
         private $_fullName;
+        private $_firstName;
+        private $_secondName;
+
+        /**
+         * @return mixed
+         */
+        public function getSecondName()
+        {
+            return $this->_secondName;
+        }
+
+        /**
+         * @param mixed $secondName
+         */
+        public function setSecondName($secondName)
+        {
+            $this->_secondName = $secondName;
+        }
+
+        /**
+         * @return mixed
+         */
+        public function getFirstName()
+        {
+            return $this->_firstName;
+        }
+
+        /**
+         * @param mixed $firstName
+         */
+        public function setFirstName($firstName)
+        {
+            $this->_firstName = $firstName;
+        }
         /**
          * @return string
          */
@@ -132,10 +166,17 @@ require_once 'db_connect.php';
                 $this->_dob = $result->firstRecord()->value("DOB");
                 $this->_email= $result->firstRecord()->value("Email");
                 $this->_fullName = $result->firstRecord()->value("FullName");
+                $this->splitName();
             }
             
             
             
+        }
+
+        private function splitName(){
+            $fullName = trim($this->_fullName);
+            $this->_secondName = (strpos($fullName, ' ') === false) ? '' : preg_replace('#.*\s([\w-]*)$#', '$1', $fullName);
+            $this->_firstName = trim( preg_replace('#'.$this->_secondName.'#', '', $fullName ) );
         }
 
         /**
@@ -208,7 +249,17 @@ require_once 'db_connect.php';
         public function getNumberOfFriends(){
             global $client;
             $result = $client->run('MATCH(u:User), (u1:User) WHERE (u)-[:friends]-(u1) AND u.username="' . $this->_username . '" RETURN u1, COUNT(u1) as no');
-            $number = $result->firstRecord()->value("no");
+            try{
+                if($result->firstRecord() != null){
+                    $number = $result->firstRecord()->value("no");
+                }else{
+                    return 0;
+                }
+
+            }catch(UnexpectedValueException $e){
+                return 0;
+            }
+
             return $number;
         }
 
@@ -258,7 +309,7 @@ require_once 'db_connect.php';
                 if($this->checkRelationExists($user,"friendReq")){
                     global $client;
                     $client->run("MATCH (u1:User)-[r:friendRequest]->(u:User) WHERE u1.username = '" . $user->getUsername() . "' AND u.username = '" . $this->_username . "' DELETE r");
-                    $client->run("MATCH(u:User), (u1:User) WHERE u.username = '" . $this->_username . "' AND u1.username ='" . $user->getUsername() . "' CREATE (u)-[:friends]-(u1)");
+                    $client->run("MATCH(u:User), (u1:User) WHERE u.username = '" . $this->_username . "' AND u1.username ='" . $user->getUsername() . "' CREATE (u)-[:friends]->(u1)");
                 }
 
             }
@@ -437,6 +488,73 @@ require_once 'db_connect.php';
             //RETURN 5 films
 
             //6.
+        }
+
+        /**
+         *
+         */
+        public function newGetRecommendations(){
+            //Method
+
+            //1. Get the users friends
+            //2. Associate a score with each of these friends
+            //3. Get all the films that the user's friends like
+            //4. Get all the films the user likes
+            //5. Foreach film that the user likes and their friend likes, add 1 to that friend's score.
+            //6. Foreach film that the user dislikes and their friend likes, take 1 from that friend's score.
+            //6. For the top friends, look at the films they like minus the films the user has seen.
+            //7. Associate a score with each of these films
+            //8. The score of each film is the number of times that that film appears in the top friends' lists.
+            //9. IF 5 films are not found from the top 3 friends, extend to the top 5 friends, then the top 10 friends.
+
+
+
+
+            //Implementation
+
+            //1 & 2
+            //friends[friendNumber]["friend"] returns friend class
+            //friends[friendNumber][1] returns friend score
+            //friends[friendNumber][2] returns the films that friend likes
+            $friends = array();
+            foreach($this->getFriends() as $friend){
+                $friends[] = array("friend" => $friend, "score" => 0, "films" => $friend->getLikes());
+            }
+
+            $userLikes = $this->getLikes();
+
+            $userDislikes = $this->getDislikes();
+
+            //thisFriend[1] returns friend score
+            //thisFriend[2] returns the films that friend likes
+
+
+            foreach($friends as $thisFriend){
+                foreach($thisFriend['films'] as $thisFilm){
+                    if(in_array($thisFilm, $userLikes)){
+                        $thisFriend['score']++;
+                    }
+                    else if(in_array($thisFilm, $userDislikes)){
+                        $thisFriend['score']--;
+                    }
+                }
+            }
+
+            usort($friends, function($a, $b) {
+                return $a['score'] <=> $b['score'];
+            });
+
+            foreach($friends as $thisFriend){
+                echo($thisFriend['friend']->getFirstName() . " " . $thisFriend['score'] . "\n");
+            }
+
+
+
+
+
+
+
+
         }
 
 

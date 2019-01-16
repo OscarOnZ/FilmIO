@@ -5,4 +5,5 @@
       <path value="$USER_HOME$/vendor/graphaware" />
     </include_path>
   </component>
+  <component name="PhpProjectSharedConfiguration" php_language_level="7.3" />
 </project>

@@ -75,7 +75,7 @@ if(loginCheck()== true){
 		<div class="col-12">
 			<div class="jumbotron jumbotron-fluid">
 			  <div class="container">
-				<h1 class="display-4">Hello, <?php echo ucfirst($_SESSION['thisUser']->getFullName());?>!</h1>
+				<h1 class="display-4">Hello, <?php echo ucfirst($_SESSION['thisUser']->getFirstName());?>!</h1>
 				<p class="lead">Welcome back, here are your latest film recommendations</p>
 			  </div>
 			</div>
