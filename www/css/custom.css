@@ -1,0 +1,9 @@
+/*
+ * Copyright (c) Oscar Cameron 2019.
+ */
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}

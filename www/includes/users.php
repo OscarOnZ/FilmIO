@@ -403,89 +403,8 @@ require_once 'db_connect.php';
 
         }
 
-        public function getRecommendations(){
-            $recFilms = array();
-            $topFilms = [new Film("0111161"),
-                        new Film("0068646"),
-                        new Film("0071562"),
-                        new Film("0468569"),
-                        new Film("0050083"),
-                        new Film("0108052")];
-
-
-
-            //TODO
-            //METHOD
-            //1. Get all films user has liked.
-            //2. Check if any of the user's friends like that film
-            //IF has friends
-            //3. Recommend a film that the friend likes
-            //ELSE
-            //4. Recommend a top film
-            //6. RETURN 5 films
-
-            //1.
-            $filmsLiked = $this->getLikes();
-            $filmsDisliked = $this->getDislikes();
-            //2.
-            $friends = $this->getFriends();
-
-            if(count($friends) > 0 && count($filmsLiked) > 0){
-
-                foreach($friends as $friend){ //For every friend
-                    $friendsLikedFilms = $friend->getLikes(); //Get the films they like
-                    foreach($filmsLiked as $film){ //For each of the films found
-
-                        if(in_array($film, $friendsLikedFilms)){ //Check if any friends liked that film
-                            //3.
-                            foreach ($friendsLikedFilms as $friendFilm){ //For each film the friend liked
-                                if(!in_array($friendFilm, $filmsDisliked) && !in_array($friendFilm, $filmsLiked) && !in_array($friendFilm, $recFilms)){ // make sure i haven't seen it
-                                    $recFilms[] = $friendFilm;
-                                }
-
-                            }
-
-                        }
-                    }
-                }
-
-
-
-
-
-
-            }
-            if(count($recFilms) < 5 || $recFilms == null){
-                for ($i = 0; $i < 6 - count($recFilms); $i++){
-                    if(!in_array($topFilms[$i], $filmsDisliked) && !in_array($topFilms[$i], $filmsLiked) && !in_array($topFilms[$i], $recFilms)){
-                        $recFilms[] = $topFilms[$i];
-                    }
-                }
-            }
-
-
-            //             $freqs = array_count_values($recFilms);
-            //             $recFilmsFreq = array();
-            //             foreach($recFilms as $film){
-            //                 $recFilmsFreq = [
-            //                     $film => $freqs[$film]
-
-
-            //                 ];
-            //             }
-
-            return $recFilms;
-
-
-            //Get all users that like that film
-            //Recommend film that them users like
-            //RETURN 5 films
-
-            //6.
-        }
-
         /**
-         *
+         * @return Film[]
          */
         public function newGetRecommendations(){
             //Method
@@ -517,6 +436,11 @@ require_once 'db_connect.php';
                 $nFriends++;
             }
 
+            if($nFriends == 0){ //Algorithm won't work without friends, we'll just have to recommend generic films.
+                $topFilms = array_column(getGlobalFilmList(5), 0);
+                return $topFilms;
+            }
+
             $userLikes = $this->getLikes();
 
             $userDislikes = $this->getDislikes();
@@ -530,18 +454,18 @@ require_once 'db_connect.php';
                     foreach($friends[$i]['films'] as $thisFilm){
                         if(in_array($thisFilm, $userLikes)){
                             $friends[$i]['score']++;
-                            echo $friends[$i]['friend']->getUsername() . " score increased to " . $friends[$i]['score'] . "\n";
+                            //echo $friends[$i]['friend']->getUsername() . " score increased to " . $friends[$i]['score'] . "\n";
                         }
                         else if(in_array($thisFilm, $userDislikes)){
                             $friends[$i]['score']--;
-                            echo $friends[$i]['friend']->getUsername() . " score decreased to " . $friends[$i]['score'] . "\n";
+                            //echo $friends[$i]['friend']->getUsername() . " score decreased to " . $friends[$i]['score'] . "\n";
                         }
                     }
                 }
 
 
             foreach($friends as $thisFriend){
-                echo($thisFriend['friend']->getFirstName() . " " . $thisFriend['score'] . "\n");
+                //echo($thisFriend['friend']->getFirstName() . " " . $thisFriend['score'] . "\n");
             }
 
 
@@ -566,20 +490,16 @@ require_once 'db_connect.php';
                     $finalFilms[] = $film;
                 }
             }
-
-
-
-
-
             return $finalFilms;
 
         }
 
         /**
-         * @param $x
-         * @param $n
-         * @param $friends
-         * @return void
+         * @param int $x
+         * @param int $n
+         * @param Friend[] $friends
+         * @param int $nFriends
+         * @return Film[]
          */
         private function getXFilms($x, $n, $friends, $nFriends){
             $topFilms = [];
@@ -595,7 +515,7 @@ require_once 'db_connect.php';
             }
 
             if($topFilms > $x){
-                echo "Number of films recommended:" . count($topFilms);
+                //echo "Number of films recommended:" . count($topFilms);
                 return array_column($topFilms, 0);
             }
             else{
@@ -603,7 +523,7 @@ require_once 'db_connect.php';
                 if($n + 2 > $nFriends){
                     return array_column($topFilms, 0);
                 }else{
-                    $this->getXFilms($x, $n + 2, $friends);
+                    $this->getXFilms($x, $n + 2, $friends, $nFriends);
                 }
 
             }
