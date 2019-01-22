@@ -40,7 +40,7 @@
 
 	<ul class="navbar-nav ml-auto">
 		<form class="form-inline my-2 my-lg-0" action="../searchBar.php" method="GET">
-		  <input class="form-control mr-sm-2" type="search" name="text" placeholder="Find a new film..." aria-label="Search"">
+		  <input class="form-control mr-sm-2" type="search" name="text" placeholder="Find a film or friend" aria-label="Search"">
 		  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 		</form>
 
@@ -49,7 +49,7 @@
 		  <?php echo $_SESSION['thisUser']->getFullName();?>
 		</a>
 		<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-		  <a class="dropdown-item" href="#">My Profile</a>
+		  <a class="dropdown-item" href="/viewUser.php?username=<?php echo $_SESSION['thisUser']->getUsername(); ?>">My Profile</a>
 		  <div class="dropdown-divider"></div>
 		  <a class="dropdown-item" href="#">Settings</a>
 		  <a class="dropdown-item" href="../logout.php">Log Out</a>

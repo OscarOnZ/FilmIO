@@ -47,7 +47,7 @@ if(!loginCheck()){
 
     <body>
     <div class="container-fluid" style="padding-top: 70px">
-        <?php include_once ("/includes/navbar.php"); ?>
+        <?php include_once ("includes/navbar.php"); ?>
     </div>
     <div class="container">
         <p class="text-sm-right"> We found <?php echo(count($films) + count($users)); ?> result(s)</p>

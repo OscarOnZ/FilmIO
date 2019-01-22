@@ -3,7 +3,9 @@
 require_once( $_SERVER['DOCUMENT_ROOT']. "./includes/functions.php");
 startSession();
 if(loginCheck()== true){
-    
+        if(count($_SESSION['thisUser']->getLikes()) > 3){
+            header("Location: index.php");
+        }
     ?>
 <!doctype html>
 <head>
@@ -17,57 +19,7 @@ if(loginCheck()== true){
 
 <body>
 <div class="container-fluid" style="padding-top: 70px">
-<nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark"> <!--<Navbar>-->
-
-<div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2"><!-- Left --> 
-	<ul class="navbar-nav mr-auto">
-		<li class="nav-item">
-			<a class="nav-link" href="index.php"><span class="fas fa-film"></span> Your Films</a>
-		</li>
-
-		<li class="nav-item">
-			<a class="nav-link" href="#"><span class="fas fa-newspaper"></span> News Feed</a>
-		</li>
-
-		<li class="nav-item">
-			<a class="nav-link" href="#"><span class="fas fa-pencil-alt"></span> New Review</a>
-		</li>
-	</ul>
-</div>
-<div class="mx-auto order-0"> <!-- Middle --> 
-	<a class="navbar-brand mx-auto" href="index.php">
-		FilmIO
-	  </a>
-	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-
-</div>
-<div class="navbar-collapse collapse w-100 order-3 dual-collapse2"> <!-- Right -->
-
-	<ul class="navbar-nav ml-auto">
-		<form class="form-inline my-2 my-lg-0" action="searchBar.php" method="GET">
-		  <input class="form-control mr-sm-2" type="search" placeholder="Find a new film..." aria-label="Search" name="text">
-		  <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-		</form>
-
-	  <li class="nav-item dropdown">
-		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-		  <?php echo $_SESSION['thisUser']->getFullName();?>
-		</a>
-		<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-		  <a class="dropdown-item" href="#">Change Password</a>
-		  <a class="dropdown-item" href="#">Notifications</a>
-		  <div class="dropdown-divider"></div>
-		  <a class="dropdown-item" href="/logout.php">Log Out</a>
-		</div>
-	  </li>
-
-
-
-
-	</ul>
-</div></nav> <!-- Navbar -->
+    <?php include_once("includes/navbar.php") ?>
 
 
 <div class="row">
@@ -76,6 +28,7 @@ if(loginCheck()== true){
 		  <div class="container">
 			<h1 class="display-4">Hello, <?php echo $_SESSION['thisUser']->getFullName()?>!</h1>
 			<p class="lead">Welcome to FilmIO! To help us get started please tell what you think of these films below:</p>
+            <p class="lead">Please note, if you don't like any of these films, click the thumbs-down then search for the film above and tell us you like it!</p>
 		  </div>
 		</div>
 	</div>
@@ -83,28 +36,29 @@ if(loginCheck()== true){
 	<?php 
 	//TODO
     // make $cards[] based on top films
-	$cards = array(new Film("0126029"), new Film("0377092"), new Film("0137523"));
-	$thisCard = 0;
-	foreach ($cards as $card){
-	    echo'
+    $nFilms = 4;
+	$cards = getGlobalFilmList($nFilms);
+    for($i = 1; $i < $nFilms; $i++){
+
+        echo'
         	<div class="col-4">
         		<div class="card">
-                  	<img class="card-img-top" src="' . $card->getImgPath() . '" alt="Card image cap">
+                  	<img class="card-img-top" src="' . $cards[$i - 1][0]->getImgPath() . '" alt="Card image cap">
                   <div class="card-body">
-                    <h5 class="card-title">' . $card->getName() . '</h5>
-                    <p class="card-text">'. $card->getDescription() . '</p>
+                    <h5 class="card-title">' . $cards[$i - 1][0]->getName() . '</h5>
+                    <p class="card-text">'. $cards[$i - 1][0]->getDescription() . '</p>
                     <div class="btn-group btn-group-lg" role="group">
-                    <button href="#" id="button' . $thisCard . '1" onClick="ratingClick(this, \'' . $cards[$thisCard]->getFilmID() .'\', \'1\')" class="btn btn-success"><span class="fas fa-thumbs-up"></span></button>
-                    <a href="#" class="btn btn-danger button' . $thisCard . '-1" onClick="ratingClick(this, \'' . $cards[$thisCard]->getFilmID() .'\', \'-1\')"><span class="fas fa-thumbs-down"></span></a>
-                    <a href="#" class="btn btn-primary">I haven\'t seen it</a>
-<div id="nowhere"></div>
+                        <button href="#" id="button' . $i . '1" onClick="ratingClick(this, \'' . $cards[$i - 1][0]->getFilmID() .'\', \'1\')" class="btn btn-success"><span class="fas fa-thumbs-up"></span></button>
+                        <button href="#" class="btn btn-danger button' . $i . '-1" onClick="ratingClick(this, \'' . $cards[$i - 1][0]->getFilmID() .'\', \'-1\')"><span class="fas fa-thumbs-down"></span></button>
+                        <button href="#" class="btn btn-primary">I haven\'t seen it</button>
                     </div>
                   </div>
                 </div>
         	</div>
+
         ';
-	    $thisCard++;
-	}
+
+    }
 	
 	?>
 	

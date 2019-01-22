@@ -2,6 +2,7 @@
 require_once 'db_connect.php';
 require_once 'film.php';
 require_once 'users.php';
+require_once 'toast.php';
     function startSession() {
         $session_name = 'FilmIO';
         $secure = false;

@@ -7,7 +7,7 @@ function ratingClick(element, filmID, score){
             data: {type: 'userFilm', filmID: filmID, score: score},
             success: function(result){
                 $(element).addClass("disabled");
-                alert(result);
+
             }
         });
     }

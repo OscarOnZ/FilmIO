@@ -367,6 +367,43 @@ require_once 'db_connect.php';
             }
         }
 
+        /**
+         * @return array;
+         */
+        public function getToasts(){
+            global $client;
+            $result = $client->run("MATCH (n:User) WHERE n.username = '" . $this->getUsername() . "'' RETURN n.toasts as serial");
+            $serial = $result->firstRecord()->value("serial");
+            $toasts = unserialize($serial);
+            return $toasts;
+        }
+
+        public function getUnviewedToasts(){
+            $unviewed = [];
+            $toasts = $this->getToasts();
+            foreach($toasts as $toast){
+                if(!$toast->getViewed()){
+                    $unviewed[] = $toast;
+                }
+            }
+        }
+
+        public function setToasts($toasts){
+            global $client;
+            $serial = serialize($toasts);
+            $client->run("MATCH (n:User) WHERE n.username='" . $this->getUsername() . "' SET n.toasts ='" . $serial . "''");
+        }
+
+        public function notifyFriends($film){
+            $thisToast = new Toast($this->getUsername(), $film->getFilmName, false);
+            $friends = $this->getFriends();
+            foreach ($friends as $friend){
+                $toasts = $this->getToasts();
+                $toasts[] = $thisToast;
+                $this->setToasts($toasts);
+            }
+        }
+
 
 
         /**

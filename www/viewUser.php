@@ -23,7 +23,10 @@ if(loginCheck()) {
     else{
         header("Location: index.php");
     }
-
+    $me = false;
+    if($user->getUsername() == $_SESSION['thisUser']->getUsername()){
+        $me = true;
+    }
 
 
     ?>
@@ -46,6 +49,12 @@ if(loginCheck()) {
 
 <div class="container">
 
+    <?php if($me){ ?>
+
+        <div class="alert alert-info"> This is how your profile looks to the public</div>
+
+
+    <?php } ?>
 
     <div class="row">
 
@@ -65,7 +74,7 @@ if(loginCheck()) {
             </div>
             <div class="card">
                 <div class="card-header">
-                    Description
+                    Liked Films
                 </div>
                 <div class="card-body">
                     <?php
@@ -79,7 +88,9 @@ if(loginCheck()) {
                     <p class="card-text"><?php echo $user->getFullName() . " likes " . $filmsLiked;?></p>
                 </div>
             </div>
+
             <div style="padding: 15px"></div>
+            <?php if(!$me){ ?>
             <div class="card">
                 <div class="card-header">
                     Do you know <?php echo $user->getFirstName() ?>?
@@ -90,6 +101,7 @@ if(loginCheck()) {
 
                 </div>
             </div>
+        <?php } ?>
         </div>
     </div>
 </div>

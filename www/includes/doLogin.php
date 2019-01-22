@@ -8,7 +8,7 @@ startSession();
     $username = strtolower($_POST['Luname']);
     $password = $_POST['Lpass'];
     
-    //Checks username doesn't contain any symbols for SQL Inj. prevention and saving time
+    //Checks username doesn't contain any symbols for SQL Inj. prevention
     if(preg_match('[\W]', $username)){
         header("Location: ../login.php?error=11"); // Invalid username
     }

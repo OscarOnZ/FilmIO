@@ -2,7 +2,9 @@
 require_once( $_SERVER['DOCUMENT_ROOT']. "./includes/functions.php");
 startSession();
 if(loginCheck()== true){
-    
+    if(count($_SESSION['thisUser']->getLikes()) < 3){
+        header("Location: firstLogin.php");
+    }
 
 ?>
 <html lang="en">
@@ -36,7 +38,6 @@ if(loginCheck()== true){
 	
 	$cards = $_SESSION['thisUser']->newGetRecommendations();
 	$cardsCount = 0;
-	try{
 	    foreach($cards as $card) {
 	        if($cardsCount < 4){
 	            echo'
@@ -55,11 +56,6 @@ if(loginCheck()== true){
 	        }
 	        
 	    }
-	}catch(OutOfBoundsException $e){
-	    
-	    //TODO - Call to a getRecommendations with no username which returns a list of generic recommendations.
-	    
-	}
 	
 	
 	?>

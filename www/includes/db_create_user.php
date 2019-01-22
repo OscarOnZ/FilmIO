@@ -1,6 +1,6 @@
 <?php
 
-    require_once("users.php");
+    require_once("functions.php");
     
     
     //get POST Variables
@@ -39,6 +39,7 @@
         $u = new user($fullName, $username, "$pw", "$email", "$dob", date("dmy"));
         if($u->createUser()){
             header('Location: '. '../login.php?success=1');
+
         }else{
             header('Location: ' . '../login.php?error=usernameTaken');
         }
