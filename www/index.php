@@ -15,11 +15,13 @@ if(loginCheck()== true){
 <title>FilmIO</title>
 <link href="../css/bootstrap-4.0.0.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css" integrity="sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/toastr.css">
 </head>
 
 <body>
 <div class="container-fluid" style="padding-top: 70px">
 <?php include_once("includes/navbar.php") ?>
+
 
 	
 	<div class="row">
@@ -32,6 +34,10 @@ if(loginCheck()== true){
 			</div>
 		</div>
 	</div>
+
+
+
+
 <!--    Recommendation Cards-->
 	<div class="row">
 	<?php 
@@ -72,6 +78,34 @@ if(loginCheck()== true){
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap-4.0.0.js"></script>
 <script src="js/searchBar.js"></script>
+<script src="js/toastr.js"></script>
+
+<script>
+    <?php
+            //UNIMPLEMENTED FEATURE
+//            $toasts = $_SESSION['thisUser']->getToasts();
+//    echo count($toasts);
+//            foreach($toasts as $toast){
+//
+//            echo'
+//
+//            $(document).ready(function() {
+//
+//                toastr.info(' .json_encode($toast->getUsername()) . ' + " likes " + ' .  json_encode($toast->getFilmName()) . ')
+//
+//
+//
+//
+//            });';
+//
+//            }
+    ?>
+
+
+
+</script>
+
+
 </body>
 
     <footer>

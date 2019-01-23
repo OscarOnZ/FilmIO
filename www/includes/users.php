@@ -338,6 +338,23 @@ require_once 'db_connect.php';
         }
 
         /**
+         * @return User[]
+         */
+        public function getSentFriendRequests(){
+            global $client;
+            $users = array();
+            $result = $client->run('MATCH(u:User), (u1:User) WHERE (u)-[:friendRequest]->(u1) AND u.username="' . $this->getUsername() . '" RETURN u1.username as username');
+            foreach ($result->records() as $record){
+                if($record != null){ //
+                    $users[] = new User($record->value("username"));
+                }else{
+                }
+            }
+            return $users;
+        }
+
+
+        /**
          * @param Film $film
          * @return int;
          */
@@ -346,6 +363,7 @@ require_once 'db_connect.php';
                 global $client;
                 try{
                     $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $this->_username .'" AND f.ID="'. $film->getFilmID() .'" CREATE (u)-[r:likes]->(f)');
+                    $this->notifyFriends($film);
                     return 1; //Success
                 }catch(Exception $e) {
                     return 0; //Error Code - Failed
@@ -368,29 +386,34 @@ require_once 'db_connect.php';
         }
 
         /**
-         * @return array;
+         * @return Toast[]
          */
         public function getToasts(){
             global $client;
-            $result = $client->run("MATCH (n:User) WHERE n.username = '" . $this->getUsername() . "'' RETURN n.toasts as serial");
+            $result = $client->run("MATCH (n:User) WHERE n.username = '" . $this->getUsername() . "' RETURN n.toasts as serial");
             $serial = $result->firstRecord()->value("serial");
-            $toasts = unserialize($serial);
+            $toasts = unserialize(base64_decode($serial));
             return $toasts;
         }
 
+        /**
+         * @return array
+         */
         public function getUnviewedToasts(){
             $unviewed = [];
             $toasts = $this->getToasts();
-            foreach($toasts as $toast){
-                if(!$toast->getViewed()){
-                    $unviewed[] = $toast;
+            for($i = 0; $i < count($toasts) - 1; $i++){
+                if(!$toasts[$i]->getViewed()){
+                    $unviewed[] = $toasts[$i];
+                    $toasts[$i]->setViewed();
                 }
             }
+            return $unviewed;
         }
 
         public function setToasts($toasts){
             global $client;
-            $serial = serialize($toasts);
+            $serial = base64_encode(serialize($toasts));
             $client->run("MATCH (n:User) WHERE n.username='" . $this->getUsername() . "' SET n.toasts ='" . $serial . "''");
         }
 
@@ -400,7 +423,7 @@ require_once 'db_connect.php';
             foreach ($friends as $friend){
                 $toasts = $this->getToasts();
                 $toasts[] = $thisToast;
-                $this->setToasts($toasts);
+                $friend->setToasts($toasts);
             }
         }
 

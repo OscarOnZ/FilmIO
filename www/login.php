@@ -31,15 +31,15 @@ if(loginCheck()){
 	
 	
 	<div class="container-fluid " style="padding-top: 70px;">
-	<div class="row">
+
 		<?php if(isset($_GET['success']) && $_GET['success'] == 1){
-		      echo'<div class="alert alert-success" role="alert">
+		      echo'<div class="alert alert-success text-center" role="alert">
             			        You\'ve signed up! Please now sign in.
             			        </div>';
 		      
 		}else if(isset($_GET['error']) && $_GET['error'] == 'inputInc'){
 		    
-		    echo'<div class="alert alert-danger" role="alert">
+		    echo'<div class="alert alert-danger text-center" role="alert">
             			        Them details don\'t seem correct. Please double check them!
             			        </div>';
 		    
@@ -49,7 +49,7 @@ if(loginCheck()){
 		
 		?>
 	
-	</div>
+
 
         <div class="row">
 

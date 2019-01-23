@@ -12,9 +12,6 @@
 require_once( $_SERVER['DOCUMENT_ROOT']. "./includes/functions.php");
 startSession();
 if(loginCheck()== true){
-        if(count($_SESSION['thisUser']->getLikes()) > 3){
-            header("Location: index.php");
-        }
     ?>
 <!doctype html>
 <head>
@@ -28,9 +25,77 @@ if(loginCheck()== true){
 
 <body>
 <div class="container-fluid" style="padding-top: 70px">
-    <?php include_once("includes/navbar.php") ?>
+    <?php include_once("includes/navbar.php"); ?>
+
+
+    <div class="row">
+        <div class="col-3">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active" id="v-pills-r-tab" data-toggle="pill" href="#v-pills-r" role="tab" aria-controls="v-pills-home" aria-selected="true">Received</a>
+                <a class="nav-link" id="v-pills-s-tab" data-toggle="pill" href="#v-pills-s" role="tab" aria-controls="v-pills-profile" aria-selected="false">Sent</a>
+            </div>
+        </div>
+        <div class="col-9">
+            <!--Received Friend Requests-->
+
+            <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade show active" id="v-pills-r" role="tabpanel" aria-labelledby="v-pills-r-tab">
+
+                    <div class="card" style="width: 18rem;">
+                        <img src="img/user-placeholder.png" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">Card title</h5>
+                            <p class="card-text">Username 1</p>
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button type="button" class="btn btn-secondary">Left</button>
+                                <button type="button" class="btn btn-secondary">Middle</button>
+                                <button type="button" class="btn btn-secondary">Right</button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <!--Sent Friend Requests-->
+                <div class="tab-pane fade" id="v-pills-s" role="tabpanel" aria-labelledby="v-pills-s-tab">
+
+                    <?php
+
+
+                    $users = $_SESSION['thisUser']->getSentFriendRequests();
+
+                    foreach($users as $user){
+                        echo '
+                        <div class="card" style="width: 18rem;">
+                            <img src="img/user-placeholder.png" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">' . $user->getUsername() . '</h5>
+                                <p class="card-text"></p>
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <a role="button" class="btn btn-primary" href="#">Accept</a>
+                                    <a role="button" class="btn btn-primary" href="viewUser.php?username=' . $user->getUsername() . '">View Profile</a>
+                                    <a role="button" class="btn btn-primary" href="#">Deny</a>
+                                </div>
+                            </div>
+                        </div>
+                    
+                    ';}?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
 
 </div>
+
+
+
+
 
 
 

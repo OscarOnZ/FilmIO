@@ -4,7 +4,7 @@
     
     use GraphAware\Neo4j\Client\ClientBuilder;
     
-    const _SERVERADDRESS = 'bolt://neo4j:1234@localhost:7687';
+    const _SERVERADDRESS = 'bolt://neo4j:1234@localhost:11001';
     
     global $client;
     global $apiKey;

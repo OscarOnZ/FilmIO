@@ -14,6 +14,7 @@ if(loginCheck()){
 
             if(isset($_GET['score']) && $_GET['score'] == 1 && isset($_GET['filmID'])){ // Positive Rating
                 $thisUser->likes($thisFilm);
+
                 
             }
             else if(isset($_GET['score']) && $_GET['score'] == -1 && isset($_GET['filmID'])){ // Negative Rating

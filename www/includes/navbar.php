@@ -23,7 +23,7 @@
 		</li>
 
 		<li class="nav-item">
-			<a class="nav-link" href="#"><span class="fas fa-pencil-alt"></span> Friend Requests</a>
+			<a class="nav-link" href="../requests.php"><span class="fas fa-pencil-alt"></span> Friend Requests</a>
 		</li>
 	</ul>
 </div>
