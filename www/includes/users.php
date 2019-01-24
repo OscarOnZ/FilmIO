@@ -325,6 +325,19 @@ require_once 'db_connect.php';
                 }
             }
         }
+
+        /**
+         * @param User $user
+         */
+        public function withdrawFriendRequest($user){
+            if($this->existsInDB($user)){
+                if($this->checkRelationExists($user,"friendReq")){
+                    global $client;
+                    $client->run("MATCH (u:User)-[r:friendRequest]->(u1:User) WHERE u.username = '" . $this->getUsername() . "' AND u1.username = '" . $user->getUsername() . "' DELETE r");
+                }
+            }
+        }
+
         /**
          * @param User $user
          */

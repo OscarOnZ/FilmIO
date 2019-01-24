@@ -29,6 +29,22 @@ if(loginCheck()){
             $requestToUser = new User($_GET['username']);
             $thisUser->sendFriendRequest($requestToUser);
         }
+        else if($_GET['type'] == "withdrawFR"){
+            $requestUser = new User($_GET['username']);
+            $thisUser->withdrawFriendRequest($requestUser);
+            header("Location: ../requests.php");
+        }
+        else if($_GET['type'] == "acceptFR"){
+            $requestUser = new User($_GET['username']);
+            $thisUser->acceptFriendRequest($requestUser);
+            header("Location: requests.php");
+        }
+        else if($_GET['type'] == "denyFR"){
+            $requestUser = new User($_GET['username']);
+            $thisUser->denyFriendRequest($requestUser);
+            header("Location: requests.php");
+        }
+
         else{
             echo 'invalid type';
         }

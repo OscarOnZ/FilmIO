@@ -59,7 +59,7 @@ if(loginCheck()== true){
                               <h4 class="card-title">Rank #' . $i .': ' . $cards[$i - 1][0]->getName() .'</h4>
                               <p class="card-text"> ' . $cards[$i - 1][0]->getDescription() . '</p>
                               <p class="card-text">This film is liked by ' . $cards[$i - 1]['score'] .' users</p>
-                              <a href="#" class="btn btn-primary">Go to this film</a>
+                              <a href="viewFilm.php?id=' . $cards[$i -1][0]->getFilmID() .'" class="btn btn-primary">Go to this film</a>
                             </div>
                           </div>
                 

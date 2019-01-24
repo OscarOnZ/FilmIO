@@ -40,7 +40,7 @@ if(loginCheck()== true){
 	$cards = getGlobalFilmList($nFilms);
     for($i = 1; $i < $nFilms; $i++){
 
-        echo'
+        ?>
         	<div class="col-4">
         		<div class="card">
                   	<img class="card-img-top" src="' . $cards[$i - 1][0]->getImgPath() . '" alt="Card image cap">
@@ -56,9 +56,9 @@ if(loginCheck()== true){
                 </div>
         	</div>
 
-        ';
 
-    }
+
+    <?php }
 	
 	?>
 	

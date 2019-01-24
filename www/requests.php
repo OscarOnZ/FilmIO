@@ -11,7 +11,9 @@
  */
 require_once( $_SERVER['DOCUMENT_ROOT']. "./includes/functions.php");
 startSession();
-if(loginCheck()== true){
+if(!loginCheck()){
+    header("Location: login.php");
+}
     ?>
 <!doctype html>
 <head>
@@ -66,26 +68,31 @@ if(loginCheck()== true){
                     $users = $_SESSION['thisUser']->getSentFriendRequests();
 
                     foreach($users as $user){
-                        echo '
+                        ?>
+
                         <div class="card" style="width: 18rem;">
                             <img src="img/user-placeholder.png" class="card-img-top" alt="...">
                             <div class="card-body">
-                                <h5 class="card-title">' . $user->getUsername() . '</h5>
-                                <p class="card-text"></p>
-                                <div class="btn-group" role="group" aria-label="Basic example">
-                                    <a role="button" class="btn btn-primary" href="#">Accept</a>
-                                    <a role="button" class="btn btn-primary" href="viewUser.php?username=' . $user->getUsername() . '">View Profile</a>
-                                    <a role="button" class="btn btn-primary" href="#">Deny</a>
-                                </div>
+                                <h5 class="card-title"><?php echo $user->getUsername(); ?></h5>
+                                <p class="card-text">
+                                    <div class="btn-group" role="group" aria-label="sentButtons">
+                                        <a role="button" class="btn btn-primary" href="viewUser.php?username=<?php echo $user->getUsername(); ?>">View Profile</a>
+                                    <a href="/includes/createRelation.php?type=withdrawFR&username=<?php echo $user->getUsername(); ?>" class="btn btn-primary">
+                                        Withdraw</a>
+
+                                    </div>
+                                </p>
+                            </div>
+
                             </div>
                         </div>
                     
-                    ';}?>
+                   <?php }
+                    ?>
                 </div>
             </div>
         </div>
     </div>
-
 
 
 
@@ -102,8 +109,8 @@ if(loginCheck()== true){
 <script src="js/jquery-3.2.1.min.js"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap-4.0.0.js"></script>
+<script src="js/ratingClick.js"></script>
 <script src="js/searchBar.js"></script>
-<script src="js/friendReqClick.js"></script>
 </body>
 
     <footer>
@@ -111,11 +118,3 @@ if(loginCheck()== true){
         <p class="text-center text-secondary">FilmIO by Oscar Cameron Copyright &copy; 2018</p>
         <hr>
     </footer>
-    </html>
-
-
-    <?php
-}else{
-    header("Location: login.php");
-
-} ?>
