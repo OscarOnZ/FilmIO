@@ -305,36 +305,28 @@ require_once 'db_connect.php';
          * @param User $user
          */
         public function acceptFriendRequest($user){
-            if($this->existsInDB($user)){
-                if($this->checkRelationExists($user,"friendReq")){
                     global $client;
                     $client->run("MATCH (u1:User)-[r:friendRequest]->(u:User) WHERE u1.username = '" . $user->getUsername() . "' AND u.username = '" . $this->_username . "' DELETE r");
                     $client->run("MATCH(u:User), (u1:User) WHERE u.username = '" . $this->_username . "' AND u1.username ='" . $user->getUsername() . "' CREATE (u)-[:friends]->(u1)");
-                }
 
-            }
         }
         /**
          * @param User $user
          */
         public function denyFriendRequest($user){
-            if($this->existsInDB($user)){
-                if($this->checkRelationExists($user,"friendReq")){
-                    global $client;
-                    $client->run("MATCH (u1:User)-[r:friendRequest]->(u:User) WHERE u1.username = '" . $user->getUsername() . "' AND u.username = '" . $this->_username . "' DELETE r");
-                }
-            }
+            global $client;
+            $client->run("MATCH (u1:User)-[r:friendRequest]->(u:User) WHERE u1.username = '" . $user->getUsername() . "' AND u.username = '" . $this->_username . "' DELETE r");
         }
 
         /**
          * @param User $user
+         * @return bool
          */
         public function withdrawFriendRequest($user){
             if($this->existsInDB($user)){
-                if($this->checkRelationExists($user,"friendReq")){
                     global $client;
                     $client->run("MATCH (u:User)-[r:friendRequest]->(u1:User) WHERE u.username = '" . $this->getUsername() . "' AND u1.username = '" . $user->getUsername() . "' DELETE r");
-                }
+                    return true;
             }
         }
 
@@ -357,6 +349,22 @@ require_once 'db_connect.php';
             global $client;
             $users = array();
             $result = $client->run('MATCH(u:User), (u1:User) WHERE (u)-[:friendRequest]->(u1) AND u.username="' . $this->getUsername() . '" RETURN u1.username as username');
+            foreach ($result->records() as $record){
+                if($record != null){ //
+                    $users[] = new User($record->value("username"));
+                }else{
+                }
+            }
+            return $users;
+        }
+
+        /**
+         * @return User[]
+         */
+        public function getFriendRequests(){
+            global $client;
+            $users = array();
+            $result = $client->run('MATCH(u:User), (u1:User) WHERE (u1)-[:friendRequest]->(u) AND u.username="' . $this->getUsername() . '" RETURN u1.username as username');
             foreach ($result->records() as $record){
                 if($record != null){ //
                     $users[] = new User($record->value("username"));

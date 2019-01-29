@@ -80,9 +80,14 @@ if(loginCheck()) {
                     <?php
 
                     $filmsLiked = "";
-                    foreach($user->getLikes() as $film){
-                        $filmsLiked = $filmsLiked . $film->getName() . ", ";
+                    if(count($user->getLikes()) == 0){
+                        $filmsLiked = "nothing apparently!";
+                    }else{
+                        foreach($user->getLikes() as $film){
+                            $filmsLiked = $filmsLiked . $film->getName() . ", ";
+                        }
                     }
+
 
                     ?>
                     <p class="card-text"><?php echo $user->getFullName() . " likes " . $filmsLiked;?></p>

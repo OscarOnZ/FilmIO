@@ -43,13 +43,13 @@ if(loginCheck()== true){
         ?>
         	<div class="col-4">
         		<div class="card">
-                  	<img class="card-img-top" src="' . $cards[$i - 1][0]->getImgPath() . '" alt="Card image cap">
+                  	<img class="card-img-top" src="<?php echo $cards[$i - 1][0]->getImgPath(); ?>" alt="Card image cap">
                   <div class="card-body">
-                    <h5 class="card-title">' . $cards[$i - 1][0]->getName() . '</h5>
-                    <p class="card-text">'. $cards[$i - 1][0]->getDescription() . '</p>
+                    <h5 class="card-title"><?php echo $cards[$i - 1][0]->getName(); ?></h5>
+                    <p class="card-text"><?php echo $cards[$i - 1][0]->getDescription(); ?></p>
                     <div class="btn-group btn-group-lg" role="group">
-                        <button href="#" id="button' . $i . '1" onClick="ratingClick(this, \'' . $cards[$i - 1][0]->getFilmID() .'\', \'1\')" class="btn btn-success"><span class="fas fa-thumbs-up"></span></button>
-                        <button href="#" class="btn btn-danger button' . $i . '-1" onClick="ratingClick(this, \'' . $cards[$i - 1][0]->getFilmID() .'\', \'-1\')"><span class="fas fa-thumbs-down"></span></button>
+                        <button href="#" id="button' . $i . '1" onClick="ratingClick(this,<?php echo $cards[$i - 1][0]->getFilmID(); ?>, '1')" class="btn btn-success"><span class="fas fa-thumbs-up"></span></button>
+                        <button href="#" class="btn btn-danger button' . $i . '-1" onClick="ratingClick(this,<?php echo $cards[$i - 1][0]->getFilmID(); ?>, '-1')"><span class="fas fa-thumbs-down"></span></button>
                         <button href="#" class="btn btn-primary">I haven\'t seen it</button>
                     </div>
                   </div>

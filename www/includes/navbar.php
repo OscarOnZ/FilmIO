@@ -23,12 +23,12 @@
 		</li>
 
 		<li class="nav-item">
-			<a class="nav-link" href="../requests.php"><span class="fas fa-pencil-alt"></span> Friend Requests</a>
+			<a class="nav-link" href="../requests.php"><span class="fas fa-user"></span> Friends</a>
 		</li>
 	</ul>
 </div>
 <div class="mx-auto order-0"> <!-- Middle -->
-	<a class="navbar-brand mx-auto" href="#">
+	<a class="navbar-brand mx-auto" href="index.php">
 		FilmIO
 	  </a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">

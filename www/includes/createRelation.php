@@ -31,18 +31,27 @@ if(loginCheck()){
         }
         else if($_GET['type'] == "withdrawFR"){
             $requestUser = new User($_GET['username']);
-            $thisUser->withdrawFriendRequest($requestUser);
-            header("Location: ../requests.php");
+            if($thisUser->withdrawFriendRequest($requestUser)){
+                header("Location: ../requests.php?sent");
+            }else{
+                header("Location: ../requests.php?fail");
+            }
+
         }
         else if($_GET['type'] == "acceptFR"){
             $requestUser = new User($_GET['username']);
             $thisUser->acceptFriendRequest($requestUser);
-            header("Location: requests.php");
+            header("Location: ../requests.php");
         }
         else if($_GET['type'] == "denyFR"){
             $requestUser = new User($_GET['username']);
             $thisUser->denyFriendRequest($requestUser);
-            header("Location: requests.php");
+            header("Location: ../requests.php");
+        }
+        else if($_GET['type'] == "unfriend"){
+            $requestUser = new User($_GET['username']);
+            $thisUser->unfriend($requestUser);
+            header("Location: ../requests.php");
         }
 
         else{
