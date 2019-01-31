@@ -36,7 +36,7 @@
     }
     
     if($pw == $confirm){
-        $u = new user($fullName, $username, "$pw", "$email", "$dob", date("dmy"));
+        $u = new User($fullName, $username, $pw, $email, $dob, date("dmy"));
         if($u->createUser()){
             header('Location: '. '../login.php?success=1');
 

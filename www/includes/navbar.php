@@ -49,9 +49,8 @@
 		  <?php echo $_SESSION['thisUser']->getFullName();?>
 		</a>
 		<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-		  <a class="dropdown-item" href="/viewUser.php?username=<?php echo $_SESSION['thisUser']->getUsername(); ?>">My Profile</a>
+		  <a class="dropdown-item" href="../profile.php">My Profile</a>
 		  <div class="dropdown-divider"></div>
-		  <a class="dropdown-item" href="#">Settings</a>
 		  <a class="dropdown-item" href="../logout.php">Log Out</a>
 		</div>
 	  </li>

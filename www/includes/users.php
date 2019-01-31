@@ -15,21 +15,7 @@ require_once 'db_connect.php';
         private $_firstName;
         private $_secondName;
 
-        /**
-         * @return mixed
-         */
-        public function getSecondName()
-        {
-            return $this->_secondName;
-        }
 
-        /**
-         * @param mixed $secondName
-         */
-        public function setSecondName($secondName)
-        {
-            $this->_secondName = $secondName;
-        }
 
         /**
          * @return mixed
@@ -46,6 +32,23 @@ require_once 'db_connect.php';
         {
             $this->_firstName = $firstName;
         }
+
+        /**
+         * @return mixed
+         */
+        public function getSecondName()
+        {
+            return $this->_secondName;
+        }
+
+        /**
+         * @param mixed $secondName
+         */
+        public function setSecondName($secondName)
+        {
+            $this->_secondName = $secondName;
+        }
+
         /**
          * @return string
          */
@@ -172,6 +175,22 @@ require_once 'db_connect.php';
             
             
         }
+
+        /**
+         * @param $newPassword
+         * @return bool
+         */
+        public function changePassword($newPassword){
+            global $client;
+            $pw = password_hash($newPassword, PASSWORD_DEFAULT);
+            if($client->run("MATCH (n:User) WHERE n.username= '" . $this->getUsername() . "' SET n.password= '" . $pw . "'")){
+                return true;
+            }else{
+                return false;
+            }
+
+
+    }
 
         private function splitName(){
             $fullName = trim($this->_fullName);
@@ -400,6 +419,14 @@ require_once 'db_connect.php';
          */
         public function dislikes($film){
             if(!$this->checkRelationExists($film, "dislikes")){
+                global $client;
+                try{
+                    $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $this->_username .'" AND f.ID="'. $film->getFilmID() .'" CREATE (u)-[r:dislikes]->(f)');
+                    $this->notifyFriends($film);
+                    return 1; //Success
+                }catch(Exception $e) {
+                    return 0; //Error Code - Failed
+                }
 
             }else{
                 return -1; //Error Code - Already Exists

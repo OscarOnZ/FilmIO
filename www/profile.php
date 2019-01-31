@@ -101,7 +101,37 @@ if(loginCheck()) {
 
                         </div>
                     </div>
-                    <div class="tab-pane fade show active" id="v-pills-i" role="tabpanel" aria-labelledby="v-pills-i-tab">
+                    <div class="tab-pane fade show" id="v-pills-i" role="tabpanel" aria-labelledby="v-pills-i-tab">
+                        <br>
+                        <div class="row">
+                            <div class="col-3"></div>
+                            <div class="col-6">
+                                <form method="post" action="includes/doChangePW.php">
+                                    <div class="form-group row">
+                                        <label for="staticName" class="col-sm-2 col-form-label">Name</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="<?php echo $_SESSION['thisUser']->getFullName(); ?>">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="<?php echo $_SESSION['thisUser']->getEmail(); ?>">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+                                        <div class="col-sm-10">
+                                            <input type="password" class="form-control" id="newPW" name="newPW" placeholder="Enter a new password">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" id="submit">Change Password</button>
+                                </form>
+                            </div>
+
+                        </div>
+
+
 
                     </div>
                 </div>
@@ -123,6 +153,7 @@ if(loginCheck()) {
     <script src="js/bootstrap-4.0.0.js"></script>
     <script src="js/searchBar.js"></script>
     <script src="js/friendReqClick.js"></script>
+    <script src="js/doChangePW.js"></script>
     </body>
 
     <footer>

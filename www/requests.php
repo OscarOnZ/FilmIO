@@ -43,103 +43,109 @@ if(!loginCheck()){
 
             <div class="tab-content" id="v-pills-tabContent">
                 <div class="tab-pane fade show active" id="v-pills-r" role="tabpanel" aria-labelledby="v-pills-r-tab">
+                    <div class="row">
+                        <?php
 
-                    <?php
 
+                        $users = $_SESSION['thisUser']->getFriendRequests();
+                        if(count($users) == 0){
+                            echo "You haven't received any friend requests.";
+                        }else{
+                            foreach($users as $user){
+                                ?>
+                                <div class="col">
+                                    <div class="card" style="width: 18rem;">
+                                        <img src="img/user-placeholder.png" class="card-img-top" alt="...">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><?php echo $user->getUsername(); ?></h5>
+                                            <p class="card-text">
+                                            <div class="btn-group" role="group" aria-label="sentButtons">
+                                                <a role="button" class="btn btn-primary" href="viewUser.php?username=<?php echo $user->getUsername(); ?>">View Profile</a>
+                                                <a href="/includes/createRelation.php?type=acceptFR&username=<?php echo $user->getUsername(); ?>" class="btn btn-primary">
+                                                    Accept</a>
+                                                <a href="/includes/createRelation.php?type=denyFR&username=<?php echo $user->getUsername(); ?>" class="btn btn-primary">
+                                                    Deny</a>
 
-                    $users = $_SESSION['thisUser']->getFriendRequests();
-                    if(count($users) == 0){
-                        echo "You haven't received any friend requests.";
-                    }else{
-                    foreach($users as $user){
-                        ?>
-                        <br>
-                        <div class="card" style="width: 18rem;">
-                            <img src="img/user-placeholder.png" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title"><?php echo $user->getUsername(); ?></h5>
-                                <p class="card-text">
-                                <div class="btn-group" role="group" aria-label="sentButtons">
-                                    <a role="button" class="btn btn-primary" href="viewUser.php?username=<?php echo $user->getUsername(); ?>">View Profile</a>
-                                    <a href="/includes/createRelation.php?type=acceptFR&username=<?php echo $user->getUsername(); ?>" class="btn btn-primary">
-                                        Accept</a>
-                                    <a href="/includes/createRelation.php?type=denyFR&username=<?php echo $user->getUsername(); ?>" class="btn btn-primary">
-                                        Deny</a>
+                                            </div>
 
+                                        </div>
+                                    </div>
                                 </div>
-                                </p>
-                            </div>
-
-                        </div>
-                    <?php }}
-                    ?>
-
-
+                            <?php }}
+                        ?>
+                    </div>
 
                 </div>
 
                 <!--Sent Friend Requests-->
                 <div class="tab-pane fade" id="v-pills-s" role="tabpanel" aria-labelledby="v-pills-s-tab">
+                    <div class="row">
+                        <?php
 
-                    <?php
 
+                        $users = $_SESSION['thisUser']->getSentFriendRequests();
+                        if(count($users) == 0){
+                            echo "You haven't sent any friend requests.";
+                        }else{
+                            foreach($users as $user){
+                                ?>
+                                <div class="col">
+                                    <div class="card" style="width: 18rem;">
+                                        <img src="img/user-placeholder.png" class="card-img-top" alt="...">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><?php echo $user->getUsername(); ?></h5>
+                                            <p class="card-text">
+                                            <div class="btn-group" role="group" aria-label="sentButtons">
+                                                <a role="button" class="btn btn-primary" href="viewUser.php?username=<?php echo $user->getUsername(); ?>">View Profile</a>
+                                                <a href="/includes/createRelation.php?type=withdrawFR&username=<?php echo $user->getUsername(); ?>" class="btn btn-primary">
+                                                    Withdraw</a>
 
-                    $users = $_SESSION['thisUser']->getSentFriendRequests();
-                    if(count($users) == 0){
-                        echo "You haven't sent any friend requests.";
-                    }else{
-                    foreach($users as $user){
-                        ?>
-                        <br>
-                        <div class="card" style="width: 18rem;">
-                            <img src="img/user-placeholder.png" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <h5 class="card-title"><?php echo $user->getUsername(); ?></h5>
-                                <p class="card-text">
-                                <div class="btn-group" role="group" aria-label="sentButtons">
-                                    <a role="button" class="btn btn-primary" href="viewUser.php?username=<?php echo $user->getUsername(); ?>">View Profile</a>
-                                    <a href="/includes/createRelation.php?type=withdrawFR&username=<?php echo $user->getUsername(); ?>" class="btn btn-primary">
-                                        Withdraw</a>
-
+                                            </div>
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
-                                </p>
-                            </div>
+                            <?php }}
+                        ?>
 
-                        </div>
-                    <?php }}
-                    ?>
+                    </div>
+
                 </div>
 
 
                 <div class="tab-pane fade" id="v-pills-e" role="tabpanel" aria-labelledby="v-pills-e-tab">
-            <!--                    Existing Friends-->
-                    <?php
+                    <div class="row">
+                        <!--Existing Friends-->
+                        <?php
 
 
-                    $users = $_SESSION['thisUser']->getFriends();
-                    if(count($users) == 0){
-                        echo "You haven't added any friends!";
-                    }else{
-                        foreach($users as $user){
-                            ?>
-                            <br>
-                            <div class="card" style="width: 18rem;">
-                                <img src="img/user-placeholder.png" class="card-img-top" alt="...">
-                                <div class="card-body">
-                                    <h5 class="card-title"><?php echo $user->getUsername(); ?></h5>
-                                    <p class="card-text">
-                                    <div class="btn-group" role="group" aria-label="sentButtons">
-                                        <a role="button" class="btn btn-primary" href="viewUser.php?username=<?php echo $user->getUsername(); ?>">View Profile</a>
-                                        <a href="/includes/createRelation.php?type=unfriend&username=<?php echo $user->getUsername(); ?>" class="btn btn-danger">
-                                            Unfriend</a>
+                        $users = $_SESSION['thisUser']->getFriends();
+                        if(count($users) == 0){
+                            echo "You haven't added any friends!";
+                        }else{
+                            foreach($users as $user){
+                                ?>
+                                <div class="col">
+                                    <div class="card" style="width: 18rem;">
+                                        <img src="img/user-placeholder.png" class="card-img-top" alt="...">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><?php echo $user->getUsername(); ?></h5>
+                                            <p class="card-text">
+                                            <div class="btn-group" role="group" aria-label="sentButtons">
+                                                <a role="button" class="btn btn-primary" href="viewUser.php?username=<?php echo $user->getUsername(); ?>">View Profile</a>
+                                                <a href="/includes/createRelation.php?type=unfriend&username=<?php echo $user->getUsername(); ?>" class="btn btn-danger">
+                                                    Unfriend</a>
 
+                                            </div>
+                                            </p>
+                                        </div>
                                     </div>
-                                    </p>
                                 </div>
+                            <?php }}
+                        ?>
 
-                            </div>
-                        <?php }}
-                    ?>
+                    </div>
+
                 </div>
 
 

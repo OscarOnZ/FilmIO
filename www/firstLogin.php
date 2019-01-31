@@ -36,7 +36,7 @@ if(loginCheck()== true){
 	<?php 
 	//TODO
     // make $cards[] based on top films
-    $nFilms = 4;
+    $nFilms = 10;
 	$cards = getGlobalFilmList($nFilms);
     for($i = 1; $i < $nFilms; $i++){
 
@@ -50,7 +50,7 @@ if(loginCheck()== true){
                     <div class="btn-group btn-group-lg" role="group">
                         <button href="#" id="button' . $i . '1" onClick="ratingClick(this,<?php echo $cards[$i - 1][0]->getFilmID(); ?>, '1')" class="btn btn-success"><span class="fas fa-thumbs-up"></span></button>
                         <button href="#" class="btn btn-danger button' . $i . '-1" onClick="ratingClick(this,<?php echo $cards[$i - 1][0]->getFilmID(); ?>, '-1')"><span class="fas fa-thumbs-down"></span></button>
-                        <button href="#" class="btn btn-primary">I haven\'t seen it</button>
+                        <button href="#" class="btn btn-primary">I haven't seen it</button>
                     </div>
                   </div>
                 </div>
