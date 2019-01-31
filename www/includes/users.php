@@ -139,6 +139,8 @@ require_once 'db_connect.php';
 
         /**
          * User constructor.
+         * Can take up to 6 arguments - however can take less.
+         * Php doesn't support overloading methods, therefore func_num_args is used.
          */
         function __construct() //$fullName, $username, $password, $email, $dob, $datecreated
         {
@@ -164,7 +166,8 @@ require_once 'db_connect.php';
 
                 //Get non-sensitive data from db (not the hashed password)
 
-                $result = $client->run("MATCH (n:User) WHERE n.username = '" . $this->_username ."' RETURN n.dateCreated as DateCreated, n.DOB as DOB, n.email as Email, n.fullName as FullName");
+                $result = $client->run("MATCH (n:User) WHERE n.username = '" . $this->_username ."' RETURN
+                 n.dateCreated as DateCreated, n.DOB as DOB, n.email as Email, n.fullName as FullName");
                 $this->_dateCreated = $result->firstRecord()->value("DateCreated");
                 $this->_dob = $result->firstRecord()->value("DOB");
                 $this->_email= $result->firstRecord()->value("Email");
@@ -183,7 +186,8 @@ require_once 'db_connect.php';
         public function changePassword($newPassword){
             global $client;
             $pw = password_hash($newPassword, PASSWORD_DEFAULT);
-            if($client->run("MATCH (n:User) WHERE n.username= '" . $this->getUsername() . "' SET n.password= '" . $pw . "'")){
+            if($client->run("MATCH (n:User) WHERE n.username= '" . $this->getUsername() . "' SET n.password= '"
+                . $pw . "'")){
                 return true;
             }else{
                 return false;
@@ -194,7 +198,8 @@ require_once 'db_connect.php';
 
         private function splitName(){
             $fullName = trim($this->_fullName);
-            $this->_secondName = (strpos($fullName, ' ') === false) ? '' : preg_replace('#.*\s([\w-]*)$#', '$1', $fullName);
+            $this->_secondName = (strpos($fullName, ' ') === false) ? '' : preg_replace('#.*\s([\w-]*)$#'
+                , '$1', $fullName);
             $this->_firstName = trim( preg_replace('#'.$this->_secondName.'#', '', $fullName ) );
         }
 
@@ -207,7 +212,7 @@ require_once 'db_connect.php';
             global $client;
             //Check User doesn't exist.
             
-            $query = "MATCH(n:User) WHERE n.username = '" . $user->_username . "' RETURN COUNT(n) AS no;";
+            $query = "MATCH(n:User) WHERE n.username = '" . $user->_username . "' RETURN COUNT(n) AS no";
             $result = $client->run($query);
             $noOfUsers = $result->firstRecord()->get('no');
             
@@ -220,6 +225,7 @@ require_once 'db_connect.php';
         }
 
         /**
+         * Pushes user class onto DB
          * @return bool
          */
         public function createUser()
@@ -267,7 +273,8 @@ require_once 'db_connect.php';
          */
         public function getNumberOfFriends(){
             global $client;
-            $result = $client->run('MATCH(u:User), (u1:User) WHERE (u)-[:friends]-(u1) AND u.username="' . $this->_username . '" RETURN u1, COUNT(u1) as no');
+            $result = $client->run('MATCH(u:User), (u1:User) WHERE (u)-[:friends]-(u1) AND u.username="'
+                . $this->_username . '" RETURN u1, COUNT(u1) as no');
             try{
                 if($result->firstRecord() != null){
                     $number = $result->firstRecord()->value("no");
@@ -288,7 +295,8 @@ require_once 'db_connect.php';
         public function getLikes(){
             global $client;
             $filmsLiked = array();
-            $result = $client->run('MATCH(u:User), (f:Film) WHERE (u)-[:likes]->(f) AND u.username="'. $this->_username .'" RETURN f, f.ID as ID, COUNT(f) as no');
+            $result = $client->run('MATCH(u:User), (f:Film) WHERE (u)-[:likes]->(f) AND u.username="'
+                . $this->_username .'" RETURN f, f.ID as ID, COUNT(f) as no');
             foreach ($result->records() as $record){
                 if($record != null){ //
                     $filmsLiked[] = new Film($record->value("ID"));
@@ -303,7 +311,8 @@ require_once 'db_connect.php';
         public function getDislikes(){
             global $client;
             $filmsLiked = array();
-            $result = $client->run('MATCH(u:User), (f:Film) WHERE (u)-[:dislikes]->(f) AND u.username="'. $this->_username .'" RETURN f, f.ID as ID, COUNT(f) as no');
+            $result = $client->run('MATCH(u:User), (f:Film) WHERE (u)-[:dislikes]->(f) AND u.username="'
+                . $this->_username .'" RETURN f, f.ID as ID, COUNT(f) as no');
             foreach ($result->records() as $record){
                 $filmsLiked[] = new Film($record->value("ID"));
             }
@@ -316,17 +325,23 @@ require_once 'db_connect.php';
         public function sendFriendRequest($user){
             if($this->existsInDB($user)){
                 global $client;
-                $client->run("MATCH(u:User), (u1:User) WHERE u.username = '" . $this->_username . "' AND u1.username ='" . $user->getUsername() . "' CREATE (u)-[:friendRequest]->(u1)");
+                $client->run("MATCH(u:User), (u1:User) WHERE u.username = '" . $this->_username .
+                    "' AND u1.username ='" . $user->getUsername() . "' CREATE (u)-[:friendRequest]->(u1)");
             }
         }
 
         /**
+         *
+         * First delete the friend request
+         * Second make the friend link
          * @param User $user
          */
         public function acceptFriendRequest($user){
                     global $client;
-                    $client->run("MATCH (u1:User)-[r:friendRequest]->(u:User) WHERE u1.username = '" . $user->getUsername() . "' AND u.username = '" . $this->_username . "' DELETE r");
-                    $client->run("MATCH(u:User), (u1:User) WHERE u.username = '" . $this->_username . "' AND u1.username ='" . $user->getUsername() . "' CREATE (u)-[:friends]->(u1)");
+                    $client->run("MATCH (u1:User)-[r:friendRequest]->(u:User) WHERE u1.username = '"
+                        . $user->getUsername() . "' AND u.username = '" . $this->_username . "' DELETE r");
+                    $client->run("MATCH(u:User), (u1:User) WHERE u.username = '" . $this->_username
+                        . "' AND u1.username ='" . $user->getUsername() . "' CREATE (u)-[:friends]->(u1)");
 
         }
         /**
@@ -334,7 +349,8 @@ require_once 'db_connect.php';
          */
         public function denyFriendRequest($user){
             global $client;
-            $client->run("MATCH (u1:User)-[r:friendRequest]->(u:User) WHERE u1.username = '" . $user->getUsername() . "' AND u.username = '" . $this->_username . "' DELETE r");
+            $client->run("MATCH (u1:User)-[r:friendRequest]->(u:User) WHERE u1.username = '"
+                . $user->getUsername() . "' AND u.username = '" . $this->_username . "' DELETE r");
         }
 
         /**
@@ -344,7 +360,8 @@ require_once 'db_connect.php';
         public function withdrawFriendRequest($user){
             if($this->existsInDB($user)){
                     global $client;
-                    $client->run("MATCH (u:User)-[r:friendRequest]->(u1:User) WHERE u.username = '" . $this->getUsername() . "' AND u1.username = '" . $user->getUsername() . "' DELETE r");
+                    $client->run("MATCH (u:User)-[r:friendRequest]->(u1:User) WHERE u.username = '"
+                        . $this->getUsername() . "' AND u1.username = '" . $user->getUsername() . "' DELETE r");
                     return true;
             }
         }
@@ -356,7 +373,8 @@ require_once 'db_connect.php';
             if($this->existsInDB($user)){
                 if($this->checkRelationExists($user, "friends")){
                     global $client;
-                    $client->run("MATCH (u1:User)-[r:friends]-(u:User) WHERE u1.username = '" . $user->getUsername() . "' AND u.username = '" . $this->_username . "' DELETE r");
+                    $client->run("MATCH (u1:User)-[r:friends]-(u:User) WHERE u1.username = '"
+                        . $user->getUsername() . "' AND u.username = '" . $this->_username . "' DELETE r");
                 }
             }
         }
@@ -367,7 +385,8 @@ require_once 'db_connect.php';
         public function getSentFriendRequests(){
             global $client;
             $users = array();
-            $result = $client->run('MATCH(u:User), (u1:User) WHERE (u)-[:friendRequest]->(u1) AND u.username="' . $this->getUsername() . '" RETURN u1.username as username');
+            $result = $client->run('MATCH(u:User), (u1:User) WHERE (u)-[:friendRequest]->(u1) AND u.username="'
+                . $this->getUsername() . '" RETURN u1.username as username');
             foreach ($result->records() as $record){
                 if($record != null){ //
                     $users[] = new User($record->value("username"));
@@ -383,7 +402,8 @@ require_once 'db_connect.php';
         public function getFriendRequests(){
             global $client;
             $users = array();
-            $result = $client->run('MATCH(u:User), (u1:User) WHERE (u1)-[:friendRequest]->(u) AND u.username="' . $this->getUsername() . '" RETURN u1.username as username');
+            $result = $client->run('MATCH(u:User), (u1:User) WHERE (u1)-[:friendRequest]->(u) AND u.username="'
+                . $this->getUsername() . '" RETURN u1.username as username');
             foreach ($result->records() as $record){
                 if($record != null){ //
                     $users[] = new User($record->value("username"));
@@ -402,7 +422,8 @@ require_once 'db_connect.php';
             if(!$this->checkRelationExists($film, "likes")){
                 global $client;
                 try{
-                    $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $this->_username .'" AND f.ID="'. $film->getFilmID() .'" CREATE (u)-[r:likes]->(f)');
+                    $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $this->_username .'" AND f.ID="'.
+                        $film->getFilmID() .'" CREATE (u)-[r:likes]->(f)');
                     $this->notifyFriends($film);
                     return 1; //Success
                 }catch(Exception $e) {
@@ -421,7 +442,8 @@ require_once 'db_connect.php';
             if(!$this->checkRelationExists($film, "dislikes")){
                 global $client;
                 try{
-                    $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $this->_username .'" AND f.ID="'. $film->getFilmID() .'" CREATE (u)-[r:dislikes]->(f)');
+                    $client->run('MATCH(u:User),(f:Film) WHERE u.username="' . $this->_username .'" AND f.ID="'.
+                        $film->getFilmID() .'" CREATE (u)-[r:dislikes]->(f)');
                     $this->notifyFriends($film);
                     return 1; //Success
                 }catch(Exception $e) {
@@ -433,47 +455,7 @@ require_once 'db_connect.php';
             }
         }
 
-        /**
-         * @return Toast[]
-         */
-        public function getToasts(){
-            global $client;
-            $result = $client->run("MATCH (n:User) WHERE n.username = '" . $this->getUsername() . "' RETURN n.toasts as serial");
-            $serial = $result->firstRecord()->value("serial");
-            $toasts = unserialize(base64_decode($serial));
-            return $toasts;
-        }
 
-        /**
-         * @return array
-         */
-        public function getUnviewedToasts(){
-            $unviewed = [];
-            $toasts = $this->getToasts();
-            for($i = 0; $i < count($toasts) - 1; $i++){
-                if(!$toasts[$i]->getViewed()){
-                    $unviewed[] = $toasts[$i];
-                    $toasts[$i]->setViewed();
-                }
-            }
-            return $unviewed;
-        }
-
-        public function setToasts($toasts){
-            global $client;
-            $serial = base64_encode(serialize($toasts));
-            $client->run("MATCH (n:User) WHERE n.username='" . $this->getUsername() . "' SET n.toasts ='" . $serial . "''");
-        }
-
-        public function notifyFriends($film){
-            $thisToast = new Toast($this->getUsername(), $film->getFilmName, false);
-            $friends = $this->getFriends();
-            foreach ($friends as $friend){
-                $toasts = $this->getToasts();
-                $toasts[] = $thisToast;
-                $friend->setToasts($toasts);
-            }
-        }
 
 
 
@@ -572,9 +554,6 @@ require_once 'db_connect.php';
                 }
 
 
-            foreach($friends as $thisFriend){
-                //echo($thisFriend['friend']->getFirstName() . " " . $thisFriend['score'] . "\n");
-            }
 
 
             usort($friends, function($a, $b) {
@@ -623,11 +602,10 @@ require_once 'db_connect.php';
             }
 
             if($topFilms > $x){
-                //echo "Number of films recommended:" . count($topFilms);
+                //found enough films
                 return array_column($topFilms, 0);
             }
-            else{
-                echo "not enough films";
+            else{ //not enough films found
                 if($n + 2 > $nFriends){
                     return array_column($topFilms, 0);
                 }else{
@@ -639,9 +617,61 @@ require_once 'db_connect.php';
 
         }
 
+        //UNIMPLEMENTED CODE
+
+        /**
+         * @return Toast[]
+         */
+        public function getToasts(){
+            global $client;
+            $result = $client->run("MATCH (n:User) WHERE n.username = '" . $this->getUsername() .
+                "' RETURN n.toasts as serial");
+            $serial = $result->firstRecord()->value("serial");
+            $toasts = unserialize(base64_decode($serial));
+            return $toasts;
+        }
+
+        /**
+         * @return array
+         */
+        public function getUnviewedToasts(){
+            $unviewed = [];
+            $toasts = $this->getToasts();
+            for($i = 0; $i < count($toasts) - 1; $i++){
+                if(!$toasts[$i]->getViewed()){
+                    $unviewed[] = $toasts[$i];
+                    $toasts[$i]->setViewed();
+                }
+            }
+            return $unviewed;
+        }
+
+        public function setToasts($toasts){
+            global $client;
+            $serial = base64_encode(serialize($toasts));
+            $client->run("MATCH (n:User) WHERE n.username='" . $this->getUsername() . "' SET n.toasts ='" . $serial . "''");
+        }
+
+        public function notifyFriends($film){
+            $thisToast = new Toast($this->getUsername(), $film->getFilmName, false);
+            $friends = $this->getFriends();
+            foreach ($friends as $friend){
+                $toasts = $this->getToasts();
+                $toasts[] = $thisToast;
+                $friend->setToasts($toasts);
+            }
+        }
+
+
+
 
 
     }
+
+
+
+
+
     
     
 

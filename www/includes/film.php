@@ -114,7 +114,8 @@ class Film{
     public function getTotalLikes(){
         global $client;
 
-        $result = $client->run("MATCH (u:User)-[r:likes]->(f:Film) WHERE f.ID='" . $this->getFilmID() ."' RETURN r, COUNT(r) as no");
+        $result = $client->run("MATCH (u:User)-[r:likes]->(f:Film) WHERE f.ID='" . $this->getFilmID()
+            ."' RETURN r, COUNT(r) as no");
         if($result->firstRecord() != null){
             $number = $result->firstRecord()->value("no");
         }
@@ -127,7 +128,8 @@ class Film{
 
     public function getTotalDislikes(){
         global $client;
-        $result = $client->run("MATCH (u:User)-[r:dislikes]->(f:Film) WHERE f.ID='" . $this->getFilmID() ."' RETURN r, COUNT(r) as no");
+        $result = $client->run("MATCH (u:User)-[r:dislikes]->(f:Film) WHERE f.ID='" . $this->getFilmID()
+            ."' RETURN r, COUNT(r) as no");
         if($result->firstRecord() != null){
             $number = $result->firstRecord()->value("no");
         }
