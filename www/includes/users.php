@@ -618,54 +618,54 @@ require_once 'db_connect.php';
         }
 
         //UNIMPLEMENTED CODE
-
-        /**
-         * @return Toast[]
-         */
-        public function getToasts(){
-            global $client;
-            $result = $client->run("MATCH (n:User) WHERE n.username = '" . $this->getUsername() .
-                "' RETURN n.toasts as serial");
-            $serial = $result->firstRecord()->value("serial");
-            $toasts = unserialize(base64_decode($serial));
-            return $toasts;
-        }
-
-        /**
-         * @return array
-         */
-        public function getUnviewedToasts(){
-            $unviewed = [];
-            $toasts = $this->getToasts();
-            for($i = 0; $i < count($toasts) - 1; $i++){
-                if(!$toasts[$i]->getViewed()){
-                    $unviewed[] = $toasts[$i];
-                    $toasts[$i]->setViewed();
-                }
-            }
-            return $unviewed;
-        }
-
-        public function setToasts($toasts){
-            global $client;
-            $serial = base64_encode(serialize($toasts));
-            $client->run("MATCH (n:User) WHERE n.username='" . $this->getUsername() . "' SET n.toasts ='" . $serial . "''");
-        }
-
-        public function notifyFriends($film){
-            $thisToast = new Toast($this->getUsername(), $film->getFilmName, false);
-            $friends = $this->getFriends();
-            foreach ($friends as $friend){
-                $toasts = $this->getToasts();
-                $toasts[] = $thisToast;
-                $friend->setToasts($toasts);
-            }
-        }
-
-
-
-
-
+//
+//        /**
+//         * @return Toast[]
+//         */
+//        public function getToasts(){
+//            global $client;
+//            $result = $client->run("MATCH (n:User) WHERE n.username = '" . $this->getUsername() .
+//                "' RETURN n.toasts as serial");
+//            $serial = $result->firstRecord()->value("serial");
+//            $toasts = unserialize(base64_decode($serial));
+//            return $toasts;
+//        }
+//
+//        /**
+//         * @return array
+//         */
+//        public function getUnviewedToasts(){
+//            $unviewed = [];
+//            $toasts = $this->getToasts();
+//            for($i = 0; $i < count($toasts) - 1; $i++){
+//                if(!$toasts[$i]->getViewed()){
+//                    $unviewed[] = $toasts[$i];
+//                    $toasts[$i]->setViewed();
+//                }
+//            }
+//            return $unviewed;
+//        }
+//
+//        public function setToasts($toasts){
+//            global $client;
+//            $serial = base64_encode(serialize($toasts));
+//            $client->run("MATCH (n:User) WHERE n.username='" . $this->getUsername() . "' SET n.toasts ='" . $serial . "''");
+//        }
+//
+//        public function notifyFriends($film){
+//            $thisToast = new Toast($this->getUsername(), $film->getFilmName, false);
+//            $friends = $this->getFriends();
+//            foreach ($friends as $friend){
+//                $toasts = $this->getToasts();
+//                $toasts[] = $thisToast;
+//                $friend->setToasts($toasts);
+//            }
+//        }
+//
+//
+//
+//
+//
     }
 
 

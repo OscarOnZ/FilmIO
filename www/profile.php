@@ -35,6 +35,15 @@ if(loginCheck()) {
 
     <div class="container-fluid">
 
+        <?php if(isset($_GET['error']) && $_GET['error'] == "noPW"){
+            ?>
+
+            <div class="alert alert-warning" role="alert">
+                Please complete the new password field.
+            </div>
+
+        <?php } ?>
+
 
         <div class="row">
             <div class="col-3">

@@ -2,16 +2,19 @@
 require_once 'db_connect.php';
 require_once 'film.php';
 require_once 'users.php';
-require_once 'toast.php';
     function startSession() {
         $session_name = 'FilmIO';
-        $secure = false;
+        $secure = false; //not using HTTPS;
         $httponly = true;
         
         ini_set('session.use_only_cookies', 1); //Only use cookies
         $cookieParams = session_get_cookie_params();
-        session_set_cookie_params($cookieParams["lifetime"], $cookieParams["path"], $cookieParams["domain"], $secure, $httponly);
-        session_name($session_name);
+        session_set_cookie_params($cookieParams["lifetime"],
+                                    $cookieParams["path"],
+                                    $cookieParams["domain"],
+                                    $secure,
+                                    $httponly);
+        session_name($session_name); //Create the session named 'FilmIO'
         session_start();
         session_regenerate_id(true);
     }
@@ -59,7 +62,8 @@ function getGlobalFilmList($nFilms){
                                         MATCH ()-[r:likes]->(n:Film)
                                         RETURN n.ID as FilmID, count(r) as nRels
                                         ORDER BY nRels DESC LIMIT " . $nFilms);
-        foreach($result->records() as $record){
+        foreach($result->records() as $record){ //each entry in $topFilms contains an array containing the FilmID
+            //                                                                     and Score (number of relations)
             $topFilms[] = array(new Film($record->value("FilmID")), "score" => $record->value("nRels"));
         }
 

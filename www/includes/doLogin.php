@@ -2,10 +2,9 @@
 require_once ('functions.php');
 global $client;
 startSession();
-    echo $_POST['Luname']; echo $_POST['Lpass'];
-    if(isset($_POST['Luname']) && isset($_POST['Lpass'])){
+    if(isset($_POST['Luname']) && isset($_POST['Lpass'])){ //check username and pass are set.
     
-    $username = strtolower($_POST['Luname']);
+    $username = strtolower($_POST['Luname']); //make the username lowercase.
     $password = $_POST['Lpass'];
     
     //Checks username doesn't contain any symbols for SQL Inj. prevention
@@ -15,7 +14,7 @@ startSession();
     $user = new user($username, $password);
     
     //Check Username exists in DB
-    if(!$user->existsInDB($user))
+    if(!$user->existsInDB($user)) //If user does not exist in db
     {
         header("Location: ". $_SERVER["DOCUMENT_ROOT"] . "/login.php");
     }else
@@ -34,7 +33,7 @@ startSession();
     //Compares given password to database password
     
     
-    if(password_verify($password, $db_password)){
+    if(password_verify($password, $db_password)){ // using PHP's inbuilt function
         
         //Log User in
         
@@ -47,19 +46,16 @@ startSession();
          * @param User $_SESSION['thisUser]
          */
         $_SESSION['thisUser'] = new User($username);
-        $_SESSION['login_string'] = hash('sha512', $db_password.$ip_address.$user_browser);
-        
-        
-        
-        
-        
+        $_SESSION['login_string'] = hash('sha512', $db_password.$ip_address.$user_browser); //Concatenate
+                                                            // login dependant variables to make a login string
+
         header("Location: ../index.php");
         
     }else{
         header("Location: ../login.php?error=inputInc"); //Incorrect password, sends user to login page.
     }
 }else{
-    echo 'vars not set';
+    header("location: ../login.php");
 }
 
     

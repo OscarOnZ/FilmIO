@@ -12,9 +12,15 @@
 include_once('functions.php');
 startSession();
 if(isset($_POST['newPW'])){
-    $_SESSION['thisUser']->changePassword($_POST['newPW']);
-    header("location: ../index.php");
+    if($_POST['newPW'] != ""){ //check password is set and it isn't blank
+        $_SESSION['thisUser']->changePassword($_POST['newPW']);
+        header("location: ../index.php");
+    }else{
+        header("location: profile.php?error=noPW");
+    }
+
+
 }
 else{
-    echo "no new pw";
+    header("location: profile.php?error=noPW");
 }

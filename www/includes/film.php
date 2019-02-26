@@ -99,13 +99,33 @@ class Film{
     function __construct($filmID){
         global $apiKey;
         $data = file_get_contents("http://www.omdbapi.com/?apikey=". $apiKey ."&i=tt". $filmID);
-        $filmInfo = json_decode($data);
-        $this->setName($filmInfo->Title);
-        $this->setDescription($filmInfo->Plot);
-        $this->setYear($filmInfo->Released);
-        $this->setImgPath($filmInfo->Poster);
-        $this->setFilmID($filmID);
+        $filmInfo = json_decode($data); //Parse the JSON data received
+        $responseBool = $filmInfo->Response;
+        if($responseBool == "True"){ //Check the response received contains all the film info we need. e.g. the ID is
+                                                                                                            // valid
+            $this->setName($filmInfo->Title);
+            $this->setDescription($filmInfo->Plot);
+            $this->setYear($filmInfo->Released);
+            $this->setImgPath($filmInfo->Poster);
+            $this->setFilmID($filmID);
+        }
+        else{
+            return null;
+        }
+
         
+    }
+    function existsInDB(){
+        global $client;
+        $query = "MATCH(n:Film) WHERE n.ID = '" . $this->getFilmID() . "' RETURN COUNT(n) AS no";
+        $result = $client->run($query);
+        $noOfFilms = $result->firstRecord()->get('no');
+
+        if($noOfFilms == 0){ //No records - film doesn't exist
+            return false;
+        }else{
+            return true;
+        }
     }
 
     /**

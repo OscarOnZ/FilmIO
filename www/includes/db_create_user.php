@@ -36,14 +36,18 @@
     }
     
     if($pw == $confirm){
+        //Create the user and add it to database.
         $u = new User($fullName, $username, $pw, $email, $dob, date("dmy"));
         if($u->createUser()){
             header('Location: '. '../login.php?success=1');
 
         }else{
+            //returns false if the username is taken, so tell the user to choose another name.
             header('Location: ' . '../login.php?error=usernameTaken');
         }
     }else{
+
+        //Passwords didn't match.
         header('Location: '. '../login.php?error=matchPW');
     }
     

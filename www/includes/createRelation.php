@@ -22,7 +22,8 @@ if(loginCheck()){
                 $thisUser->dislikes($thisFilm);
             }
             else{
-                echo 'invalid score';
+                //There's been a problem - send the user back to the index page so they can try again.
+                header("Location: ../index.php");
             }
         }
         else if($_GET['type'] == "userUser"){
@@ -55,15 +56,17 @@ if(loginCheck()){
         }
 
         else{
-            echo 'invalid type';
+            //There's been a problem - send the user back to the index page so they can try again.
+            header("Location: ../index.php");
         }
         
     }else{
-        echo 'type not set';
+        //There's been a problem - send the user back to the index page so they can try again.
+        header("Location: ../index.php");
     }
     
 }
 else{
-    echo 'not logged in';
+    header("Location: ../login.php");
 }
 
